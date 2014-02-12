@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import org.stathissideris.ascii2image.core.FileUtils;
 import org.stathissideris.ascii2image.core.ProcessingOptions;
-import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 
 
 /**
@@ -88,22 +87,6 @@ public class TextGrid {
 		markupTags.addAll(tags);
 	}
 	
-	public static void main(String[] args) throws Exception {
-		TextGrid grid = new TextGrid();
-		grid.loadFrom("tests/text/art10.txt");
-
-		grid.writeStringTo(grid.new Cell(28, 1), "testing");
-
-		grid.findMarkupTags();
-		
-		grid.printDebug();
-		//System.out.println(grid.fillContinuousArea(0, 0, '-').size()+" cells filled");
-		//grid.fillContinuousArea(4, 4, '-');
-		//grid.getSubGrid(1,1,3,3).printDebug();
-		//grid.printDebug();
-	}
-
-
 	public TextGrid(){
 		rows = new ArrayList<StringBuilder>();
 	}
@@ -1494,41 +1477,45 @@ public class TextGrid {
 		return StringUtils.isOneOf(c, dashedLines);
 	}
 
-	public boolean loadFrom(String filename)
+	public void loadFrom(String filename)
 			throws FileNotFoundException, IOException
 			{
-		return loadFrom(filename, null);
+		loadFrom(filename, null);
 	}
 
-	public boolean loadFrom(String filename, ProcessingOptions options)
+	public void loadFrom(String filename, ProcessingOptions options)
 		throws IOException
 	{
-				
-		String encoding = (options == null) ? null : options.getCharacterEncoding();
-		ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
 		InputStream is;
 		if ("-".equals(filename))
 		    is = System.in;
 		else
 		    is = new FileInputStream(filename);
-		String[] linesArray = FileUtils.readFile(is, filename, encoding).split("(\r)?\n");
-		for(int i = 0; i  < linesArray.length; i++)
-			lines.add(new StringBuilder(linesArray[i]));
-		
-		return initialiseWithLines(lines, options);
+
+        loadFrom(is, options);
 	}
 
-	public boolean initialiseWithText(String text, ProcessingOptions options) throws UnsupportedEncodingException {
+    public void loadFrom(InputStream is, ProcessingOptions options) throws IOException {
+        String encoding = (options == null) ? null : options.getCharacterEncoding();
+        ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
+        String[] linesArray = FileUtils.readFile(is, encoding).split("(\r)?\n");
+        for(int i = 0; i  < linesArray.length; i++)
+            lines.add(new StringBuilder(linesArray[i]));
+
+        initialiseWithLines(lines, options);
+    }
+
+    public void initialiseWithText(String text, ProcessingOptions options) throws UnsupportedEncodingException {
 
 		ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
 		String[] linesArray = text.split("(\r)?\n");
 		for(int i = 0; i  < linesArray.length; i++)
 			lines.add(new StringBuilder(linesArray[i]));
 
-		return initialiseWithLines(lines, options);
+		initialiseWithLines(lines, options);
 	}
 
-	public boolean initialiseWithLines(ArrayList<StringBuilder> lines, ProcessingOptions options) throws UnsupportedEncodingException {
+	public void initialiseWithLines(ArrayList<StringBuilder> lines, ProcessingOptions options) throws UnsupportedEncodingException {
 
 		//remove blank rows at the bottom
 		boolean done = false;
@@ -1600,8 +1587,6 @@ public class TextGrid {
 		
 		replaceBullets();
 		replaceHumanColorCodes();
-		
-		return true;
 	}
 	
 	private void fixTabs(int tabSize){

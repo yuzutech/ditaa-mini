@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Iterator;
 
 
-import org.stathissideris.ascii2image.core.DebugUtils;
 import org.stathissideris.ascii2image.text.*;
 
 /**
@@ -36,9 +35,6 @@ public class CompositeDiagramShape extends DiagramComponent {
 	private static final boolean DEBUG = false;
 
 	private ArrayList<DiagramShape> shapes = new ArrayList<DiagramShape>();
-
-	public static void main(String[] args) {
-	}
 
 	public static DiagramComponent createFromBoundaryCells(
 			final TextGrid grid,
@@ -117,14 +113,12 @@ public class CompositeDiagramShape extends DiagramComponent {
 		DiagramShape shape = new DiagramShape();
 		
 		shape.addToPoints(makePointForCell(previousCell, workGrid, cellWidth, cellHeight, allRound));
-		if(DEBUG) System.out.println("point at "+previousCell+" (call from line: "+DebugUtils.getLineNumber()+")");
 		if(workGrid.cellContainsDashedLineChar(previousCell)) shape.setStrokeDashed(true);
 
 		boolean finished = false;
 		while(!finished) {
 			visitedCells.add(cell);
 			if(workGrid.isPointCell(cell)) {
-				if(DEBUG) System.out.println("point at "+cell+" (call from line: "+DebugUtils.getLineNumber()+")");
 				shape.addToPoints(makePointForCell(cell, workGrid, cellWidth, cellHeight, allRound));
 			}
 			
@@ -139,7 +133,6 @@ public class CompositeDiagramShape extends DiagramComponent {
 			if(nextCells.size() == 1) {
 				previousCell = cell;
 				cell = (TextGrid.Cell) nextCells.getFirst();
-				if(DEBUG) System.out.println("tracing at "+cell+" (call from line: "+DebugUtils.getLineNumber()+")");
 			} else if(nextCells.size() > 1 || nextCells.size() == 0) {//3- or 4- way intersection
 				finished = true;
 				for(TextGrid.Cell nextCell : nextCells)

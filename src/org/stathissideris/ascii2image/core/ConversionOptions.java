@@ -19,17 +19,9 @@
  */
 package org.stathissideris.ascii2image.core;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -66,71 +58,44 @@ public class ConversionOptions {
         }
     }
 	
-	public ConversionOptions(CommandLine cmdLine) throws UnsupportedEncodingException{
+	public ConversionOptions(Map<String, String> cmdLine) throws UnsupportedEncodingException{
 		
-		processingOptions.setVerbose(cmdLine.hasOption("verbose"));
-		renderingOptions.setDropShadows(!cmdLine.hasOption("no-shadows"));
-		this.setDebug(cmdLine.hasOption("debug"));
-		processingOptions.setOverwriteFiles(cmdLine.hasOption("overwrite"));
+		processingOptions.setVerbose(cmdLine.containsKey("verbose"));
+		renderingOptions.setDropShadows(!cmdLine.containsKey("no-shadows"));
+		this.setDebug(cmdLine.containsKey("debug"));
+		processingOptions.setOverwriteFiles(cmdLine.containsKey("overwrite"));
 		
-		if(cmdLine.hasOption("scale")){
-			Float scale = Float.parseFloat(cmdLine.getOptionValue("scale"));
+		if(cmdLine.containsKey("scale")){
+			Float scale = Float.parseFloat(cmdLine.get("scale"));
 			renderingOptions.setScale(scale.floatValue());
 		}
 		
-		processingOptions.setAllCornersAreRound(cmdLine.hasOption("round-corners"));
-		processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.hasOption("no-separation"));
-		renderingOptions.setAntialias(!cmdLine.hasOption("no-antialias"));
-		renderingOptions.setFixedSlope(cmdLine.hasOption("fixed-slope"));
+		processingOptions.setAllCornersAreRound(cmdLine.containsKey("round-corners"));
+		processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.containsKey("no-separation"));
+		renderingOptions.setAntialias(!cmdLine.containsKey("no-antialias"));
+		renderingOptions.setFixedSlope(cmdLine.containsKey("fixed-slope"));
 
-		if(cmdLine.hasOption("background")) {
-			String b = cmdLine.getOptionValue("background");
+		if(cmdLine.containsKey("background")) {
+			String b = cmdLine.get("background");
             Color background = parseColor(b);
 			renderingOptions.setBackgroundColor(background);
 		}
 		
-		if(cmdLine.hasOption("transparent")) {
+		if(cmdLine.containsKey("transparent")) {
 			renderingOptions.setBackgroundColor(new Color(0,0,0,0));
 		}
 
-		if(cmdLine.hasOption("tabs")){
-			Integer tabSize = Integer.parseInt(cmdLine.getOptionValue("tabs"));
+		if(cmdLine.containsKey("tabs")){
+			Integer tabSize = Integer.parseInt(cmdLine.get("tabs"));
 			int tabSizeValue = tabSize.intValue();
 			if(tabSizeValue < 0) tabSizeValue = 0;
 			processingOptions.setTabSize(tabSizeValue);
 		}
 
-		String encoding = (String) cmdLine.getOptionValue("encoding");
+		String encoding = cmdLine.get("encoding");
 		if(encoding != null){
 			new String(new byte[2], encoding);
 			processingOptions.setCharacterEncoding(encoding);
-		}
-		
-		ConfigurationParser configParser = new ConfigurationParser();
-		try {
-			for (Option curOption : cmdLine.getOptions()) {
-				if(curOption.getLongOpt().equals("config")) {
-					String configFilename = curOption.getValue();
-					System.out.println("Parsing configuration file "+configFilename);
-					File file = new File(configFilename);
-					if(file.exists()){
-						configParser.parseFile(file);
-						HashMap<String, CustomShapeDefinition> shapes = configParser.getShapeDefinitionsHash();
-						processingOptions.putAllInCustomShapes(shapes);
-					} else {
-						System.err.println("File "+file+" does not exist, skipping");
-					}
-				}
-			}
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

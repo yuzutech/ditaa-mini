@@ -44,12 +44,7 @@ public class GridPatternGroup extends ArrayList<GridPattern> {
 		}
 		return false;
 	}
-	
-	
-	public void add(GridPattern... patterns) {
-		for(GridPattern p : patterns) add(p);
-	}
-	
+
 	//TODO: define criteria for on-line type?
 	
 	public static final GridPatternGroup cornerCriteria = new GridPatternGroup();

@@ -54,7 +54,7 @@ import org.stathissideris.ascii2image.text.TextGrid;
  */
 public class BitmapRenderer {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_LINES = false;
 
 	private static final String IDREGEX = "^.+_vfill$";
@@ -62,44 +62,7 @@ public class BitmapRenderer {
 	Stroke normalStroke;
 	Stroke dashStroke; 
 	
-	public static void main(String[] args) throws Exception {
-		
-		
-		long startTime = System.currentTimeMillis();
-		
-		ConversionOptions options = new ConversionOptions();
-		
-		TextGrid grid = new TextGrid();
-		
-		String filename = "bug18.txt";
-		
-		grid.loadFrom("tests/text/"+filename);
-		
-		Diagram diagram = new Diagram(grid, options);
-		new BitmapRenderer().renderToPNG(diagram, "tests/images/"+filename+".png", options.renderingOptions);
-		long endTime = System.currentTimeMillis();
-		long totalTime  = (endTime - startTime) / 1000;
-		System.out.println("Done in "+totalTime+"sec");
-		
-		File workDir = new File("tests/images");
-		//Process p = Runtime.getRuntime().exec("display "+filename+".png", null, workDir);
-	}
-
-	private boolean renderToPNG(Diagram diagram, String filename, RenderingOptions options){	
-		RenderedImage image = renderToImage(diagram, options);
-		
-		try {
-			File file = new File(filename);
-			ImageIO.write(image, "png", file);
-		} catch (IOException e) {
-			//e.printStackTrace();
-			System.err.println("Error: Cannot write to file "+filename);
-			return false;
-		}
-		return true;
-	}
-	
-	public RenderedImage renderToImage(Diagram diagram, RenderingOptions options){
+	public BufferedImage renderToImage(Diagram diagram, RenderingOptions options){
 		BufferedImage image;
 		if(options.needsTransparency()) {
 			image = new BufferedImage(
@@ -116,8 +79,8 @@ public class BitmapRenderer {
 		return render(diagram, image, options);
 	}
 	
-	public RenderedImage render(Diagram diagram, BufferedImage image,  RenderingOptions options){
-		RenderedImage renderedImage = image;
+	public BufferedImage render(Diagram diagram, BufferedImage image,  RenderingOptions options){
+        BufferedImage renderedImage = image;
 		Graphics2D g2 = image.createGraphics();
 
 		Object antialiasSetting = RenderingHints.VALUE_ANTIALIAS_OFF;
@@ -194,7 +157,7 @@ public class BitmapRenderer {
 				//destination = destination.getSubimage(blurRadius/2, blurRadius/2, image.getWidth(), image.getHeight()); 
 				g2 = (Graphics2D) destination.getGraphics();
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasSetting);
-				renderedImage = (RenderedImage) destination;
+				renderedImage = destination;
 			}
 		}
 
@@ -432,26 +395,6 @@ public class BitmapRenderer {
 		//TODO: custom shape distintion relies on filename extension. Make this more intelligent
 		if(definition.getFilename().endsWith(".png")){
 			renderCustomPNGShape(shape, g2);
-		} else if(definition.getFilename().endsWith(".svg")){
-			renderCustomSVGShape(shape, g2);
-		}
-	}
-	
-	private void renderCustomSVGShape(DiagramShape shape, Graphics2D g2){
-		CustomShapeDefinition definition = shape.getDefinition();
-		Rectangle bounds = shape.getBounds();
-		Image graphic;
-		try {
-			if(shape.getFillColor() == null) {
-				graphic = ImageHandler.instance().renderSVG(
-						definition.getFilename(), bounds.width, bounds.height, definition.stretches());
-			} else {
-				graphic = ImageHandler.instance().renderSVG(
-						definition.getFilename(), bounds.width, bounds.height, definition.stretches(), IDREGEX, shape.getFillColor());				
-			}
-			g2.drawImage(graphic, bounds.x, bounds.y, null);
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	

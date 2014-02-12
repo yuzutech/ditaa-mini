@@ -33,21 +33,6 @@ public class AbstractionGrid {
 	private TextGrid grid;
 	
 	/**
-	 * Makes an AbstractionGrid using <code>internalGrid</code> as
-	 * its internal buffer
-	 * 
-	 * @param internalGrid
-	 * @return
-	 */
-	public static AbstractionGrid makeUsingBuffer(TextGrid internalGrid){
-		if(internalGrid.getWidth() % 3 != 0
-			|| internalGrid.getHeight() % 3 != 0) throw new IllegalArgumentException("Passed TextGrid must have dimensions that are divisible by 3."); 
-		AbstractionGrid result = new AbstractionGrid(internalGrid.getWidth() / 3, internalGrid.getHeight() / 3);
-		result.setInternalBuffer(internalGrid);
-		return result;
-	}
-	
-	/**
 	 * Makes an AbstractionGrid using the <code>cellSet</code>
 	 * of <code>textGrid</code>.
 	 * 
