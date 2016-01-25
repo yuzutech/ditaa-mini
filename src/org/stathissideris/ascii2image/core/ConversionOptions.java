@@ -85,6 +85,15 @@ public class ConversionOptions {
 			renderingOptions.setBackgroundColor(new Color(0,0,0,0));
 		}
 
+		if(cmdLine.containsKey("font")) {
+			renderingOptions.setFontName(cmdLine.get("font"));
+		}
+
+		if(cmdLine.containsKey("font-size")) {
+			Integer size = Integer.parseInt(cmdLine.get("font-size"));
+			renderingOptions.setFontSize(size);
+		}
+
 		if(cmdLine.containsKey("tabs")){
 			Integer tabSize = Integer.parseInt(cmdLine.get("tabs"));
 			int tabSizeValue = tabSize.intValue();

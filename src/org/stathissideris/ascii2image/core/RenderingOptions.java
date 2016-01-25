@@ -19,7 +19,7 @@
  */
 package org.stathissideris.ascii2image.core;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.HashMap;
 
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
@@ -43,6 +43,9 @@ public class RenderingOptions {
 	private float scale = 1;
 	
 	private Color backgroundColor = Color.white;
+	private String fontName = "Dialog";
+	private int fontStyle = Font.BOLD;
+	private int fontSize = 12;
 
 	public int getCellHeight() {
 		return cellHeight;
@@ -115,4 +118,34 @@ public class RenderingOptions {
     public void setFixedSlope(boolean b) {
         this.fixedSlope = b;
     }
+
+	public String getFontName()
+	{
+		return fontName;
+	}
+
+	public void setFontName(String fontName)
+	{
+		this.fontName = fontName;
+	}
+
+	public int getFontStyle()
+	{
+		return fontStyle;
+	}
+
+	public void setFontStyle(int fontStyle)
+	{
+		this.fontStyle = fontStyle;
+	}
+
+	public int getFontSize()
+	{
+		return fontSize;
+	}
+
+	public void setFontSize(int fontSize)
+	{
+		this.fontSize = fontSize;
+	}
 }

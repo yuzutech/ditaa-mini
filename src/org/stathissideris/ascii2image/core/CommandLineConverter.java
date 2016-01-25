@@ -89,6 +89,10 @@ public class CommandLineConverter {
                 cmdLine.put("tabs", args[++i]);
             } else if (arg.equals("-b") || arg.equals("--background")) {
                 cmdLine.put("background", args[++i]);
+            } else if (arg.equals("-f") || arg.equals("--font")) {
+                cmdLine.put("font", args[++i]);
+            } else if (arg.equals("-F") || arg.equals("--font-size")) {
+                cmdLine.put("font-size", args[++i]);
             }
         }
 
