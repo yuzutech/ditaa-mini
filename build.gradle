@@ -1,15 +1,5 @@
 apply plugin: 'java'
 
-version = '0.10'
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src'
-        }
-    }
-}
-
 compileJava {
     sourceCompatibility = '1.6'
     targetCompatibility = '1.6'
