@@ -89,6 +89,10 @@ public class BitmapRenderer {
 		
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasSetting);
 
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
 		g2.setColor(options.getBackgroundColor());
 		//TODO: find out why the next line does not work
 		g2.fillRect(0, 0, image.getWidth()+10, image.getHeight()+10);

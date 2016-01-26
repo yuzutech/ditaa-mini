@@ -375,16 +375,42 @@ public class DiagramShape extends DiagramComponent {
 		return path;
 	}
 
+	private static final float[] X;
+	private static final float[] Y;
+
+	static {
+		int[] angles = new int[25];
+		int step = 360 / (angles.length - 1);
+		for (int i = 1; i < angles.length; i++) {
+			angles[i] = angles[i - 1] + step;
+		}
+
+		X = new float[angles.length];
+		Y = new float[angles.length];
+		for (int i = 0; i < angles.length; i++) {
+			double angle = Math.toRadians(angles[i]);
+			X[i] = (float)Math.cos(angle);
+			Y[i] = (float)Math.sin(angle);
+		}
+	}
+
 	public GeneralPath makeMarkerPath(Diagram diagram){
 		if(points.size() != 1) return null;
 		ShapePoint center = (ShapePoint) this.getPoint(0);
 		float diameter =
 			(float) 0.7 * Math.min(diagram.getCellWidth(), diagram.getCellHeight());
-		return new GeneralPath(new Ellipse2D.Float(
-			center.x - diameter/2,
-			center.y - diameter/2,
-			diameter,
-			diameter));
+
+		GeneralPath path = new GeneralPath();
+
+		float radius = diameter / 2.0f;
+
+		path.moveTo(center.x + X[0] * radius, center.y + Y[0] * radius);
+		for (int i = 1; i < X.length; i++) {
+			path.lineTo(center.x + X[i] * radius, center.y + Y[i] * radius);
+		}
+		path.closePath();
+
+		return path;
 	}
 
 	public Rectangle getBounds(){
