@@ -157,14 +157,14 @@ public class Diagram {
 
                         CellSet boundaries =
                                 copyGrid
-                                        .findBoundariesExpandingFrom(copyGrid.new Cell(xi, yi));
+                                        .findBoundariesExpandingFrom(new Cell(xi, yi));
                         if (boundaries.size() == 0) continue; //i'm not sure why these occur
                         boundarySetsStep2.add(boundaries.makeScaledOneThirdEquivalent());
 
                         copyGrid = new AbstractionGrid(workGrid, set).getCopyOfInternalBuffer();
                         CellSet filled =
                                 copyGrid
-                                        .fillContinuousArea(copyGrid.new Cell(xi, yi), '*');
+                                        .fillContinuousArea(new Cell(xi, yi), '*');
                         fillBuffer.fillCellsWith(filled, '*');
                         fillBuffer.fillCellsWith(boundaries, '-');
 
@@ -502,7 +502,7 @@ public class Diagram {
                 String string = pair.string;
                 if (DEBUG)
                     System.out.println("Found string " + string);
-                Cell lastCell = isolationGrid.new Cell(cell.x + string.length() - 1, cell.y);
+                Cell lastCell = new Cell(cell.x + string.length() - 1, cell.y);
 
                 int minX = getCellMinX(cell);
                 int y = getCellMaxY(cell);
@@ -930,10 +930,7 @@ public class Diagram {
     public TextGrid.Cell getCellFor(ShapePoint point)
     {
         if (point == null) throw new IllegalArgumentException("ShapePoint cannot be null");
-        //TODO: the fake grid is a problem
-        TextGrid g = new TextGrid();
-        return g.new Cell((int) point.x / cellWidth,
-                (int) point.y / cellHeight);
+        return new Cell((int) point.x / cellWidth, (int) point.y / cellHeight);
     }
 
     public ArrayList<DiagramText> getTextObjects()

@@ -28,10 +28,8 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 /**
  *
@@ -112,8 +110,7 @@ public class BitmapRenderer {
             //blur shadows
             int blurRadius = 6;
             int blurRadius2 = blurRadius * blurRadius;
-            float blurRadius2F = blurRadius2;
-            float weight = 1.0f / blurRadius2F;
+            float weight = 1.0f / (float) blurRadius2;
             float[] elements = new float[blurRadius2];
             for (int k = 0; k < blurRadius2; k++)
                 elements[k] = weight;

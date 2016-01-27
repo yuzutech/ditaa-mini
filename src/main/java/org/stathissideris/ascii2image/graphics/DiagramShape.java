@@ -297,7 +297,7 @@ public class DiagramShape extends DiagramComponent {
 
     public boolean equals(Object object)
     {
-        DiagramShape shape = null;
+        DiagramShape shape;
         if (!(object instanceof DiagramShape)) {
             return false;
         } else shape = (DiagramShape) object;
@@ -397,8 +397,7 @@ public class DiagramShape extends DiagramComponent {
 
     public Rectangle getBounds()
     {
-        Rectangle bounds = makeIntoPath().getBounds();
-        return bounds;
+        return makeIntoPath().getBounds();
     }
 
     public GeneralPath makeIntoRenderPath(Diagram diagram, RenderingOptions options)

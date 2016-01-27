@@ -31,11 +31,6 @@ public class ShapePoint extends java.awt.geom.Point2D.Float {
 
     private int type = 0;
 
-    public ShapePoint()
-    {
-        super();
-    }
-
     public ShapePoint(float x, float y)
     {
         super(x, y);
@@ -53,27 +48,9 @@ public class ShapePoint extends java.awt.geom.Point2D.Float {
         this(other.x, other.y, other.type);
     }
 
-    /**
-     * @return
-     */
     public int getType()
     {
         return type;
-    }
-
-    /**
-     * @param i
-     */
-    public void setType(int i)
-    {
-        type = i;
-    }
-
-    public boolean isInLineWith(ShapePoint point)
-    {
-        if (this.x == point.x) return true;
-        if (this.y == point.y) return true;
-        return false;
     }
 
     public boolean isWithinEdge(ShapeEdge edge)
@@ -115,17 +92,9 @@ public class ShapePoint extends java.awt.geom.Point2D.Float {
         return "(" + x + ", " + y + ")";
     }
 
-    public void assign(ShapePoint point)
-    {
-        this.x = point.x;
-        this.y = point.y;
-    }
-
     /**
      * Does the same as assign, but respects the
      * locked attribute
-     *
-     * @param point
      */
     public void moveTo(ShapePoint point)
     {
@@ -134,18 +103,6 @@ public class ShapePoint extends java.awt.geom.Point2D.Float {
         this.y = point.y;
     }
 
-
-    /**
-     * @return
-     */
-    public boolean isLocked()
-    {
-        return locked;
-    }
-
-    /**
-     * @param b
-     */
     public void setLocked(boolean b)
     {
         locked = b;

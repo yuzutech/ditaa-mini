@@ -14,6 +14,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class TestConversion {
 
+    private static final boolean WRITE_OUTPUT = false;
+
     @Parameterized.Parameters(name= "{index}: {0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][] {
@@ -78,10 +80,22 @@ public class TestConversion {
     }
 
     @Test
-    public void testConversion() {
+    public void testConversion() throws IOException
+    {
         InputStream in = getClass().getClassLoader().getResourceAsStream(inputFile);
+        if (in == null) {
+            Assert.fail("Could not find input file " + inputFile);
+        }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int result = CommandLineConverter.convert(new String[]{}, in, out);
+        out.close();
+
         assertEquals(0, result);
+
+        if (WRITE_OUTPUT) {
+            FileOutputStream fout = new FileOutputStream(new File(inputFile).getName() + ".png");
+            fout.write(out.toByteArray());
+            fout.close();
+        }
     }
 }

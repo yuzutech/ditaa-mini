@@ -129,26 +129,6 @@ public class ShapeEdge {
         return startPoint;
     }
 
-    public void setEndPoint(ShapePoint point)
-    {
-        endPoint = point;
-    }
-
-    public void setStartPoint(ShapePoint point)
-    {
-        startPoint = point;
-    }
-
-    public DiagramShape getOwner()
-    {
-        return owner;
-    }
-
-    public void setOwner(DiagramShape shape)
-    {
-        owner = shape;
-    }
-
     public boolean equals(Object object)
     {
         if (!(object instanceof ShapeEdge)) return false;

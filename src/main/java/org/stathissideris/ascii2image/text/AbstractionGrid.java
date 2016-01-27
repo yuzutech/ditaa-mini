@@ -19,7 +19,6 @@
 package org.stathissideris.ascii2image.text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  *
@@ -97,12 +96,6 @@ public class AbstractionGrid {
         return new TextGrid(grid);
     }
 
-    private void setInternalBuffer(TextGrid grid)
-    {
-        this.grid = grid;
-    }
-
-
     public int getWidth()
     {
         return grid.getWidth() / 3;
@@ -118,7 +111,7 @@ public class AbstractionGrid {
         TextGrid result = new TextGrid(getWidth(), getHeight());
         for (int y = 0; y < grid.getHeight(); y++) {
             for (int x = 0; x < grid.getWidth(); x++) {
-                TextGrid.Cell cell = grid.new Cell(x, y);
+                TextGrid.Cell cell = new TextGrid.Cell(x, y);
                 if (!grid.isBlank(cell)) result.set(x / 3, y / 3, '*');
             }
         }

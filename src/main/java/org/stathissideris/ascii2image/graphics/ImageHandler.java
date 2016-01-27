@@ -36,11 +36,6 @@ public class ImageHandler {
 
     private static final MediaTracker tracker = new MediaTracker(new JLabel());
 
-    public BufferedImage loadBufferedImage(File file) throws IOException
-    {
-        return ImageIO.read(file);
-    }
-
     public Image loadImage(String filename)
     {
         URL url = ClassLoader.getSystemResource(filename);

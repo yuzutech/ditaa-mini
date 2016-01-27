@@ -68,11 +68,6 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         internalSet.addAll(set.internalSet);
     }
 
-    void clear()
-    {
-        internalSet.clear();
-    }
-
     public int size()
     {
         return internalSet.size();
@@ -88,17 +83,6 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         TextGrid grid = new TextGrid(getMaxX() + 2, getMaxY() + 2);
         grid.fillCellsWith(this, '*');
         grid.printDebug();
-    }
-
-    public void printDebug()
-    {
-        Iterator<TextGrid.Cell> it = iterator();
-        while (it.hasNext()) {
-            TextGrid.Cell cell = it.next();
-            System.out.print(cell);
-            if (it.hasNext()) System.out.print(" ");
-        }
-        System.out.println();
     }
 
     public String getCellsAsString()
@@ -125,11 +109,10 @@ public class CellSet implements Iterable<TextGrid.Cell> {
      */
     public static CellSet copyCellSet(CellSet set)
     {
-        TextGrid grid = new TextGrid();
         CellSet newSet = new CellSet();
 
         for (TextGrid.Cell cell : set) {
-            TextGrid.Cell newCell = grid.new Cell(cell);
+            TextGrid.Cell newCell = new TextGrid.Cell(cell);
             newSet.add(newCell);
         }
         return newSet;
@@ -191,10 +174,9 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         if (DEBUG)
             System.out.println("Tracing:\nStarting at " + start + " (" + grid.getCellTypeAsString(start) + ")");
         TextGrid.Cell previous = start;
-        TextGrid.Cell cell = null;
         CellSet nextCells = workGrid.followCell(previous);
         if (nextCells.size() == 0) return TYPE_OPEN;
-        cell = nextCells.getFirst();
+        TextGrid.Cell cell = nextCells.getFirst();
         if (DEBUG)
             System.out.println("\tat cell " + cell + " (" + grid.getCellTypeAsString(cell) + ")");
 
@@ -266,7 +248,7 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         TextGrid.Cell fillCell = null;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                TextGrid.Cell cCell = temp.new Cell(x, y);
+                TextGrid.Cell cCell = new TextGrid.Cell(x, y);
                 if (temp.isBlank(cCell)) {
                     fillCell = cCell;
                     break;
@@ -311,26 +293,12 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         return cell != null && internalSet.contains(cell);
     }
 
-    public void addSet(CellSet set)
-    {
-        typeIsValid = false;
-        this.addAll(set);
-    }
-
     public boolean hasCommonCells(CellSet otherSet)
     {
         for (TextGrid.Cell cell : this) {
             if (otherSet.contains(cell)) return true;
         }
         return false;
-    }
-
-    public TextGrid.Cell find(int x, int y)
-    {
-        for (TextGrid.Cell cCell : this) {
-            if (cCell.x == x && cCell.y == y) return cCell;
-        }
-        return null;
     }
 
     public CellSet getFilledEquivalent(TextGrid textGrid)
@@ -344,7 +312,7 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         boolean finished = false;
         for (int y = 0; y < grid.getHeight() && !finished; y++) {
             for (int x = 0; x < grid.getWidth() && !finished; x++) {
-                cell = grid.new Cell(x, y);
+                cell = new TextGrid.Cell(x, y);
                 if (!grid.isBlank(cell)
                         && grid.isBlank(cell.getEast())
                         && grid.isBlank(cell.getWest())) {
@@ -360,38 +328,6 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         }
         System.err.println("Unexpected error, cannot find the filled equivalent of CellSet");
         return null;
-    }
-
-    /**
-     * Returns the first cell that is found to be next to <code>cell</code>.
-     */
-    public TextGrid.Cell findCellNextTo(TextGrid.Cell cell)
-    {
-        for (TextGrid.Cell cCell : this) {
-            if (cCell.isNextTo(cell)) return cCell;
-        }
-        return null;
-    }
-
-    /**
-     * Returns all the cells that are found to be next to <code>cell</code>.
-     */
-    public CellSet findCellsNextTo(TextGrid.Cell cell)
-    {
-        if (cell == null) throw new IllegalArgumentException("cell cannot be null");
-        CellSet set = new CellSet();
-        for (TextGrid.Cell cCell : this) {
-            if (cCell.isNextTo(cell)) set.add(cCell);
-        }
-        return set;
-    }
-
-    public void appendSet(CellSet set)
-    {
-        typeIsValid = false;
-        for (TextGrid.Cell cell : set) {
-            if (find(cell) == null) add(cell);
-        }
     }
 
     public void subtractSet(CellSet set)
@@ -460,12 +396,23 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         else return null;
     }
 
+    @Override
     public boolean equals(Object o)
     {
-        CellSet otherSet = (CellSet) o;
-        return internalSet.equals(otherSet.internalSet);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CellSet cells = (CellSet) o;
+
+        return internalSet != null ? internalSet.equals(cells.internalSet) : cells.internalSet == null;
+
     }
 
+    @Override
+    public int hashCode()
+    {
+        return internalSet != null ? internalSet.hashCode() : 0;
+    }
 
     public static ArrayList<CellSet> removeDuplicateSets(ArrayList<CellSet> list)
     {
@@ -579,11 +526,11 @@ public class CellSet implements Iterable<TextGrid.Cell> {
                 if (DEBUG) System.out.println("Added boundary " + start);
 
                 TextGrid.Cell previous = start;
-                TextGrid.Cell cell = null;
                 CellSet nextCells = workGrid.followCell(previous);
-                if (nextCells.size() == 0)
+                if (nextCells.size() == 0) {
                     throw new IllegalArgumentException("This shape is either open but multipart or has only one cell, and cannot be processed by this method");
-                cell = nextCells.getFirst();
+                }
+                TextGrid.Cell cell = nextCells.getFirst();
                 set.add(cell);
                 if (DEBUG) System.out.println("Added boundary " + cell);
 
@@ -649,7 +596,7 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 
         for (int y = 0; y < gridBig.getHeight(); y++) {
             for (int x = 0; x < gridBig.getWidth(); x++) {
-                TextGrid.Cell cell = gridBig.new Cell(x, y);
+                TextGrid.Cell cell = new TextGrid.Cell(x, y);
                 if (!gridBig.isBlank(cell)) gridSmall.set(x / 3, y / 3, '*');
             }
         }

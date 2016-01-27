@@ -39,11 +39,8 @@ public class TextGrid {
     private ArrayList<StringBuilder> rows;
 
     private static char[] boundaries = {'/', '\\', '|', '-', '*', '=', ':'};
-    private static char[] undisputableBoundaries = {'|', '-', '*', '=', ':'};
     private static char[] horizontalLines = {'-', '='};
     private static char[] verticalLines = {'|', ':'};
-    private static char[] arrowHeads = {'<', '>', '^', 'v', 'V'};
-    private static char[] cornerChars = {'\\', '/', '+'};
     private static char[] pointMarkers = {'*'};
     private static char[] dashedLines = {':', '~', '='};
 
@@ -114,15 +111,6 @@ public class TextGrid {
         }
     }
 
-    public void clear()
-    {
-        String blank = StringUtils.repeatString(" ", getWidth());
-        int height = getHeight();
-        rows.clear();
-        for (int i = 0; i < height; i++)
-            rows.add(new StringBuilder(blank));
-    }
-
     //	duplicated code due to lots of hits to this function
     public char get(int x, int y)
     {
@@ -162,12 +150,6 @@ public class TextGrid {
         return getSubGrid(cell.x - 1, cell.y - 1, 3, 3);
     }
 
-
-    public String getStringAt(int x, int y, int length)
-    {
-        return getStringAt(new Cell(x, y), length);
-    }
-
     public String getStringAt(Cell cell, int length)
     {
         int x = cell.x;
@@ -177,46 +159,6 @@ public class TextGrid {
                 || x < 0
                 || y < 0) return null;
         return rows.get(y).substring(x, x + length);
-    }
-
-    public char getNorthOf(int x, int y)
-    {
-        return get(x, y - 1);
-    }
-
-    public char getSouthOf(int x, int y)
-    {
-        return get(x, y + 1);
-    }
-
-    public char getEastOf(int x, int y)
-    {
-        return get(x + 1, y);
-    }
-
-    public char getWestOf(int x, int y)
-    {
-        return get(x - 1, y);
-    }
-
-    public char getNorthOf(Cell cell)
-    {
-        return getNorthOf(cell.x, cell.y);
-    }
-
-    public char getSouthOf(Cell cell)
-    {
-        return getSouthOf(cell.x, cell.y);
-    }
-
-    public char getEastOf(Cell cell)
-    {
-        return getEastOf(cell.x, cell.y);
-    }
-
-    public char getWestOf(Cell cell)
-    {
-        return getWestOf(cell.x, cell.y);
     }
 
     public void writeStringTo(int x, int y, String str)
@@ -238,15 +180,7 @@ public class TextGrid {
     public void set(int x, int y, char c)
     {
         if (x > getWidth() - 1 || y > getHeight() - 1) return;
-        StringBuilder row = rows.get(y);
-        row.setCharAt(x, c);
-    }
-
-    public void setRow(int y, String row)
-    {
-        if (y > getHeight() || row.length() != getWidth())
-            throw new IllegalArgumentException("setRow out of bounds or string wrong size");
-        rows.set(y, new StringBuilder(row));
+        rows.get(y).setCharAt(x, c);
     }
 
     public void setRow(int y, StringBuilder row)
@@ -304,28 +238,6 @@ public class TextGrid {
     public String toString()
     {
         return getDebugString();
-    }
-
-    /**
-     * Adds grid to this. Space characters in this grid
-     * are replaced with the corresponding contents of
-     * grid, otherwise the contents are unchanged.
-     *
-     * @param grid
-     * @return false if the grids are of different size
-     */
-    public boolean add(TextGrid grid)
-    {
-        if (getWidth() != grid.getWidth()
-                || getHeight() != grid.getHeight()) return false;
-        int width = getWidth();
-        int height = getHeight();
-        for (int yi = 0; yi < height; yi++) {
-            for (int xi = 0; xi < width; xi++) {
-                if (get(xi, yi) == ' ') set(xi, yi, grid.get(xi, yi));
-            }
-        }
-        return true;
     }
 
     /**
@@ -433,25 +345,8 @@ public class TextGrid {
         }
     }
 
-
-    /**
-     * Replace all occurences of c1 with c2
-     */
-    public void replaceAll(char c1, char c2)
-    {
-        int width = getWidth();
-        int height = getHeight();
-        for (int yi = 0; yi < height; yi++) {
-            for (int xi = 0; xi < width; xi++) {
-                char c = get(xi, yi);
-                if (c == c1) set(xi, yi, c2);
-            }
-        }
-    }
-
     public boolean hasBlankCells()
     {
-        CellSet set = new CellSet();
         int width = getWidth();
         int height = getHeight();
         for (int y = 0; y < height; y++) {
@@ -735,52 +630,18 @@ public class TextGrid {
         return criteria.isAnyMatchedBy(this);
     }
 
-    public boolean matchesAll(GridPatternGroup criteria)
-    {
-        return criteria.areAllMatchedBy(this);
-    }
-
-    public boolean matches(GridPattern criteria)
-    {
-        return criteria.isMatchedBy(this);
-    }
-
-
-    public boolean isOnHorizontalLine(Cell cell)
-    {
-        return isOnHorizontalLine(cell.x, cell.y);
-    }
-
     private boolean isOnHorizontalLine(int x, int y)
     {
         char c1 = get(x - 1, y);
         char c2 = get(x + 1, y);
-        if (isHorizontalLine(c1) && isHorizontalLine(c2)) return true;
-        return false;
-    }
-
-    public boolean isOnVerticalLine(Cell cell)
-    {
-        return isOnVerticalLine(cell.x, cell.y);
+        return isHorizontalLine(c1) && isHorizontalLine(c2);
     }
 
     private boolean isOnVerticalLine(int x, int y)
     {
         char c1 = get(x, y - 1);
         char c2 = get(x, y + 1);
-        if (isVerticalLine(c1) && isVerticalLine(c2)) return true;
-        return false;
-    }
-
-
-    public static boolean isBoundary(char c)
-    {
-        return StringUtils.isOneOf(c, boundaries);
-    }
-
-    public boolean isBoundary(int x, int y)
-    {
-        return isBoundary(new Cell(x, y));
+        return isVerticalLine(c1) && isVerticalLine(c2);
     }
 
     public boolean isBoundary(Cell cell)
@@ -788,20 +649,12 @@ public class TextGrid {
         char c = get(cell.x, cell.y);
         if (0 == c) return false;
         if ('+' == c || '\\' == c || '/' == c) {
-            System.out.print("");
-            if (
-                    isIntersection(cell)
-                            || isCorner(cell)
-                            || isStub(cell)
-                            || isCrossOnLine(cell)) {
-                return true;
-            } else return false;
+            return isIntersection(cell)
+                    || isCorner(cell)
+                    || isStub(cell)
+                    || isCrossOnLine(cell);
         }
-        //return StringUtils.isOneOf(c, undisputableBoundaries);
-        if (StringUtils.isOneOf(c, boundaries) && !isLoneDiagonal(cell)) {
-            return true;
-        }
-        return false;
+        return StringUtils.isOneOf(c, boundaries) && !isLoneDiagonal(cell);
     }
 
     public boolean isLine(Cell cell)
@@ -822,8 +675,7 @@ public class TextGrid {
     public boolean isHorizontalLine(int x, int y)
     {
         char c = get(x, y);
-        if (0 == c) return false;
-        return StringUtils.isOneOf(c, horizontalLines);
+        return 0 != c && StringUtils.isOneOf(c, horizontalLines);
     }
 
     public static boolean isVerticalLine(char c)
@@ -839,13 +691,7 @@ public class TextGrid {
     public boolean isVerticalLine(int x, int y)
     {
         char c = get(x, y);
-        if (0 == c) return false;
-        return StringUtils.isOneOf(c, verticalLines);
-    }
-
-    public boolean isLinesEnd(int x, int y)
-    {
-        return isLinesEnd(new Cell(x, y));
+        return 0 != c && StringUtils.isOneOf(c, verticalLines);
     }
 
     /**
@@ -855,17 +701,6 @@ public class TextGrid {
     {
         return matchesAny(cell, GridPatternGroup.linesEndCriteria);
     }
-
-    public boolean isVerticalLinesEnd(Cell cell)
-    {
-        return matchesAny(cell, GridPatternGroup.verticalLinesEndCriteria);
-    }
-
-    public boolean isHorizontalLinesEnd(Cell cell)
-    {
-        return matchesAny(cell, GridPatternGroup.horizontalLinesEndCriteria);
-    }
-
 
     public boolean isPointCell(Cell cell)
     {
@@ -883,16 +718,6 @@ public class TextGrid {
             if (StringUtils.isOneOf(get(cell), dashedLines)) return true;
         }
         return false;
-    }
-
-    public boolean exactlyOneNeighbourIsBoundary(Cell cell)
-    {
-        int howMany = 0;
-        if (isBoundary(cell.getNorth())) howMany++;
-        if (isBoundary(cell.getSouth())) howMany++;
-        if (isBoundary(cell.getEast())) howMany++;
-        if (isBoundary(cell.getWest())) howMany++;
-        return (howMany == 1);
     }
 
     /**
@@ -938,16 +763,6 @@ public class TextGrid {
     }
 
 
-    public boolean isHorizontalStarOnLine(Cell cell)
-    {
-        return matchesAny(cell, GridPatternGroup.horizontalStarOnLineCriteria);
-    }
-
-    public boolean isVerticalStarOnLine(Cell cell)
-    {
-        return matchesAny(cell, GridPatternGroup.verticalStarOnLineCriteria);
-    }
-
     public boolean isArrowhead(Cell cell)
     {
         return (isNorthArrowhead(cell)
@@ -988,21 +803,13 @@ public class TextGrid {
 //	25CB white circle
 //	25BA black right-pointing pointer
 
-
-    public boolean isBullet(int x, int y)
-    {
-        return isBullet(new Cell(x, y));
-    }
-
     public boolean isBullet(Cell cell)
     {
         char c = get(cell);
-        if ((c == 'o' || c == '*')
+        return (c == 'o' || c == '*')
                 && isBlank(cell.getEast())
                 && isBlank(cell.getWest())
-                && Character.isLetterOrDigit(get(cell.getEast().getEast())))
-            return true;
-        return false;
+                && Character.isLetterOrDigit(get(cell.getEast().getEast()));
     }
 
     public void replaceBullets()
@@ -1035,9 +842,7 @@ public class TextGrid {
      */
     public boolean isStringsEnd(Cell cell)
     {
-        return (!isBlank(cell)
-                //&& (isBlank(cell.getEast()) || get(cell.getEast()) == 0));
-                && isBlank(cell.getEast()));
+        return (!isBlank(cell) && isBlank(cell.getEast()));
     }
 
     public int otherStringsStartInTheSameColumn(Cell cell)
@@ -1066,26 +871,6 @@ public class TextGrid {
             }
         }
         return result;
-    }
-
-    public boolean isColumnBlank(int x)
-    {
-        int height = getHeight();
-        for (int y = 0; y < height; y++) {
-            if (!isBlank(x, y)) return false;
-        }
-        return true;
-    }
-
-
-    public CellSet followLine(int x, int y)
-    {
-        return followLine(new Cell(x, y));
-    }
-
-    public CellSet followIntersection(Cell cell)
-    {
-        return followIntersection(cell, null);
     }
 
     public CellSet followIntersection(Cell cell, Cell blocked)
@@ -1133,11 +918,6 @@ public class TextGrid {
         return nextCells;
     }
 
-    public CellSet followCorner(Cell cell)
-    {
-        return followCorner(cell, null);
-    }
-
     public CellSet followCorner(Cell cell, Cell blocked)
     {
         if (!isCorner(cell)) return null;
@@ -1146,11 +926,6 @@ public class TextGrid {
         if (isCorner3(cell)) return followCorner3(cell, blocked);
         if (isCorner4(cell)) return followCorner4(cell, blocked);
         return null;
-    }
-
-    public CellSet followCorner1(Cell cell)
-    {
-        return followCorner1(cell, null);
     }
 
     public CellSet followCorner1(Cell cell, Cell blocked)
@@ -1162,11 +937,6 @@ public class TextGrid {
         return result;
     }
 
-    public CellSet followCorner2(Cell cell)
-    {
-        return followCorner2(cell, null);
-    }
-
     public CellSet followCorner2(Cell cell, Cell blocked)
     {
         if (!isCorner2(cell)) return null;
@@ -1174,11 +944,6 @@ public class TextGrid {
         if (!cell.getSouth().equals(blocked)) result.add(cell.getSouth());
         if (!cell.getWest().equals(blocked)) result.add(cell.getWest());
         return result;
-    }
-
-    public CellSet followCorner3(Cell cell)
-    {
-        return followCorner3(cell, null);
     }
 
     public CellSet followCorner3(Cell cell, Cell blocked)
@@ -1190,11 +955,6 @@ public class TextGrid {
         return result;
     }
 
-    public CellSet followCorner4(Cell cell)
-    {
-        return followCorner4(cell, null);
-    }
-
     public CellSet followCorner4(Cell cell, Cell blocked)
     {
         if (!isCorner4(cell)) return null;
@@ -1202,12 +962,6 @@ public class TextGrid {
         if (!cell.getNorth().equals(blocked)) result.add(cell.getNorth());
         if (!cell.getEast().equals(blocked)) result.add(cell.getEast());
         return result;
-    }
-
-
-    public CellSet followStub(Cell cell)
-    {
-        return followStub(cell, null);
     }
 
     public CellSet followStub(Cell cell, Cell blocked)
@@ -1273,32 +1027,22 @@ public class TextGrid {
 
     public boolean isOutOfBounds(Cell cell)
     {
-        if (cell.x > getWidth() - 1
+        return cell.x > getWidth() - 1
                 || cell.y > getHeight() - 1
                 || cell.x < 0
-                || cell.y < 0) return true;
-        return false;
-    }
-
-    public boolean isOutOfBounds(int x, int y)
-    {
-        char c = get(x, y);
-        if (0 == c) return true;
-        return false;
+                || cell.y < 0;
     }
 
     public boolean isBlank(Cell cell)
     {
         char c = get(cell);
-        if (0 == c) return false;
-        return c == ' ';
+        return 0 != c && c == ' ';
     }
 
     public boolean isBlank(int x, int y)
     {
         char c = get(x, y);
-        if (0 == c) return true;
-        return c == ' ';
+        return 0 == c || c == ' ';
     }
 
     public boolean isCorner(Cell cell)
@@ -1388,11 +1132,6 @@ public class TextGrid {
         return matchesAny(cell, GridPatternGroup.intersectionCriteria);
     }
 
-    public boolean isIntersection(int x, int y)
-    {
-        return isIntersection(new Cell(x, y));
-    }
-
     public void copyCellsTo(CellSet cells, TextGrid grid)
     {
         for (Cell cell : cells) {
@@ -1435,38 +1174,6 @@ public class TextGrid {
     {
         if (isOutOfBounds(cell)) throw new IllegalArgumentException("Attempted to fill area out of bounds: " + cell);
         return seedFillOld(cell, c);
-    }
-
-    private CellSet seedFill(Cell seed, char newChar)
-    {
-        CellSet cellsFilled = new CellSet();
-        char oldChar = get(seed);
-
-        if (oldChar == newChar) return cellsFilled;
-        if (isOutOfBounds(seed)) return cellsFilled;
-
-        Stack<Cell> stack = new Stack<Cell>();
-
-        stack.push(seed);
-
-        while (!stack.isEmpty()) {
-            Cell cell = stack.pop();
-
-            //set(cell, newChar);
-            cellsFilled.add(cell);
-
-            Cell nCell = cell.getNorth();
-            Cell sCell = cell.getSouth();
-            Cell eCell = cell.getEast();
-            Cell wCell = cell.getWest();
-
-            if (get(nCell) == oldChar && !cellsFilled.contains(nCell)) stack.push(nCell);
-            if (get(sCell) == oldChar && !cellsFilled.contains(sCell)) stack.push(sCell);
-            if (get(eCell) == oldChar && !cellsFilled.contains(eCell)) stack.push(eCell);
-            if (get(wCell) == oldChar && !cellsFilled.contains(wCell)) stack.push(wCell);
-        }
-
-        return cellsFilled;
     }
 
     private CellSet seedFillOld(Cell seed, char newChar)
@@ -1546,91 +1253,10 @@ public class TextGrid {
         return boundaries;
     }
 
-
-    //TODO: incomplete method seedFillLine()
-    private CellSet seedFillLine(Cell cell, char newChar)
-    {
-        CellSet cellsFilled = new CellSet();
-
-        Stack<LineSegment> stack = new Stack<LineSegment>();
-
-        char oldChar = get(cell);
-
-        if (oldChar == newChar) return cellsFilled;
-        if (isOutOfBounds(cell)) return cellsFilled;
-
-        stack.push(new LineSegment(cell.x, cell.x, cell.y, 1));
-        stack.push(new LineSegment(cell.x, cell.x, cell.y + 1, -1));
-
-        int left;
-        while (!stack.isEmpty()) {
-            LineSegment segment = stack.pop();
-            int x;
-            //expand to the left
-            for (
-                    x = segment.x1;
-                    x >= 0 && get(x, segment.y) == oldChar;
-                    --x) {
-                set(x, segment.y, newChar);
-                cellsFilled.add(new Cell(x, segment.y));
-            }
-
-            left = cell.getEast().x;
-            boolean skip = (x > segment.x1);
-
-            if (left < segment.x1) { //leak on left?
-                //TODO: i think the first param should be x
-                stack.push(
-                        //new LineSegment(segment.y, left, segment.x1 - 1, -segment.dy));
-                        new LineSegment(x, left, segment.y - 1, -segment.dy));
-            }
-
-            x = segment.x1 + 1;
-            do {
-                if (!skip) {
-                    for (; x < getWidth() && get(x, segment.y) == oldChar; ++x) {
-                        set(x, segment.y, newChar);
-                        cellsFilled.add(new Cell(x, segment.y));
-                    }
-
-                    stack.push(new LineSegment(left, x - 1, segment.y, segment.dy));
-                    if (x > segment.x2 + 1) //leak on right?
-                        stack.push(new LineSegment(segment.x2 + 1, x - 1, segment.y, -segment.dy));
-                }
-                skip = false; //skip only once
-
-                for (++x; x <= segment.x2 && get(x, segment.y) != oldChar; ++x) {
-                    ;
-                }
-                left = x;
-            } while (x < segment.x2);
-        }
-
-        return cellsFilled;
-    }
-
     public boolean cellContainsDashedLineChar(Cell cell)
     {
         char c = get(cell);
         return StringUtils.isOneOf(c, dashedLines);
-    }
-
-    public void loadFrom(String filename)
-            throws FileNotFoundException, IOException
-    {
-        loadFrom(filename, null);
-    }
-
-    public void loadFrom(String filename, ProcessingOptions options)
-            throws IOException
-    {
-        InputStream is;
-        if ("-".equals(filename))
-            is = System.in;
-        else
-            is = new FileInputStream(filename);
-
-        loadFrom(is, options);
     }
 
     public void loadFrom(InputStream is, ProcessingOptions options) throws IOException
@@ -1638,18 +1264,6 @@ public class TextGrid {
         String encoding = (options == null) ? null : options.getCharacterEncoding();
         ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
         String[] linesArray = FileUtils.readFile(is, encoding).split("(\r)?\n");
-        for (String line : linesArray) {
-            lines.add(new StringBuilder(line));
-        }
-
-        initialiseWithLines(lines, options);
-    }
-
-    public void initialiseWithText(String text, ProcessingOptions options) throws UnsupportedEncodingException
-    {
-
-        ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
-        String[] linesArray = text.split("(\r)?\n");
         for (String line : linesArray) {
             lines.add(new StringBuilder(line));
         }
@@ -1670,7 +1284,7 @@ public class TextGrid {
         rows = new ArrayList<StringBuilder>(lines.subList(0, i + 2));
 
         if (options != null) fixTabs(options.getTabSize());
-        else fixTabs(options.DEFAULT_TAB_SIZE);
+        else fixTabs(ProcessingOptions.DEFAULT_TAB_SIZE);
 
 
         // make all lines of equal length
@@ -1799,8 +1413,7 @@ public class TextGrid {
     }
 
 
-    public class Cell {
-
+    public static class Cell {
         public int x, y;
 
         public Cell(Cell cell)
@@ -1834,92 +1447,25 @@ public class TextGrid {
             return new Cell(x - 1, y);
         }
 
-        public Cell getNW()
-        {
-            return new Cell(x - 1, y - 1);
-        }
-
-        public Cell getNE()
-        {
-            return new Cell(x + 1, y - 1);
-        }
-
-        public Cell getSW()
-        {
-            return new Cell(x - 1, y + 1);
-        }
-
-        public Cell getSE()
-        {
-            return new Cell(x + 1, y + 1);
-        }
-
-        public CellSet getNeighbours4()
-        {
-            CellSet result = new CellSet();
-
-            result.add(getNorth());
-            result.add(getSouth());
-            result.add(getWest());
-            result.add(getEast());
-
-            return result;
-        }
-
-        public CellSet getNeighbours8()
-        {
-            CellSet result = new CellSet();
-
-            result.add(getNorth());
-            result.add(getSouth());
-            result.add(getWest());
-            result.add(getEast());
-
-            result.add(getNW());
-            result.add(getNE());
-            result.add(getSW());
-            result.add(getSE());
-
-            return result;
-        }
-
-
-        public boolean isNorthOf(Cell cell)
-        {
-            if (this.y < cell.y) return true;
-            return false;
-        }
-
-        public boolean isSouthOf(Cell cell)
-        {
-            if (this.y > cell.y) return true;
-            return false;
-        }
-
-        public boolean isWestOf(Cell cell)
-        {
-            if (this.x < cell.x) return true;
-            return false;
-        }
-
-        public boolean isEastOf(Cell cell)
-        {
-            if (this.x > cell.x) return true;
-            return false;
-        }
-
-
+        @Override
         public boolean equals(Object o)
         {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
             Cell cell = (Cell) o;
-            if (cell == null) return false;
-            if (x == cell.x && y == cell.y) return true;
-            else return false;
+
+            if (x != cell.x) return false;
+            return y == cell.y;
+
         }
 
+        @Override
         public int hashCode()
         {
-            return (x << 16) | y;
+            int result = x;
+            result = 31 * result + y;
+            return result;
         }
 
         public boolean isNextTo(int x2, int y2)
@@ -1939,25 +1485,6 @@ public class TextGrid {
         public String toString()
         {
             return "(" + x + ", " + y + ")";
-        }
-
-        public void scale(int s)
-        {
-            x = x * s;
-            y = y * s;
-        }
-
-    }
-
-    private class LineSegment {
-        int x1, x2, y, dy;
-
-        public LineSegment(int x1, int x2, int y, int dy)
-        {
-            this.x1 = x1;
-            this.x2 = x2;
-            this.y = y;
-            this.dy = dy;
         }
     }
 }
