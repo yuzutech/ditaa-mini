@@ -1,21 +1,20 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- *
+ * <p/>
  * Copyright (C) 2004-2011 Efstathios Sideris
- *
+ * <p/>
  * ditaa is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- *
+ * <p/>
  * ditaa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package org.stathissideris.ascii2image.core;
 
@@ -25,44 +24,115 @@ import org.stathissideris.ascii2image.text.TextGrid;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * @author Efstathios Sideris
  */
 public class CommandLineConverter {
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        String test = "+--------+   +-------+    +-------+\n" +
-                      "|        | --+ ditaa +--> |       |\n" +
-                      "|  Text  |   +-------+    |diagram|\n" +
-                      "|Document|   |!magic!|    |       |\n" +
-                      "|     {d}|   |       |    |       |\n" +
-                      "+---+----+   +-------+    +-------+\n" +
-                      "    :                         ^\n" +
-                      "    |       Lots of work      |\n" +
-                      "    +-------------------------+";
-        convert(new String[] { "-e", "UTF-8" }, new ByteArrayInputStream(test.getBytes("UTF-8")), new ByteArrayOutputStream());
+    public static void main(String[] args)
+    {
+        try {
+            convert(args);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static int convert(String[] args, InputStream input, OutputStream output) {
+    private static void convert(String[] args) throws IOException
+    {
+        Iterator<String> argsIt = Arrays.asList(args).iterator();
+        ConversionOptions options = parseCommandLineOptions(argsIt);
+
+        String inputFile = argsIt.next();
+        String outputFile;
+        if (argsIt.hasNext()) {
+            outputFile = argsIt.next();
+        } else {
+            if (inputFile.equals("-")) {
+                outputFile = "-";
+            } else {
+                outputFile = inputFile + ".png";
+            }
+        }
+
+        InputStream in = null;
+        OutputStream out = null;
         try {
-            return doConvert(args, input, output);
+            in = inputFile.equals("-") ? System.in : new FileInputStream(inputFile);
+            out = outputFile.equals("-") ? System.out : new FileOutputStream(outputFile);
+            doConvert(in, out, options);
+        } finally {
+            if (in instanceof FileInputStream) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // Ignored
+                }
+            }
+
+            if (out instanceof FileOutputStream) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    // Ignored
+                }
+            }
+        }
+    }
+
+    public static int convert(String[] args, InputStream input, OutputStream output)
+    {
+        try {
+            doConvert(input, output, parseCommandLineOptions(Arrays.asList(args).iterator()));
+            return 0;
         } catch (RuntimeException e) {
-            printException(e, output);
+            e.printStackTrace();
+            return 1;
+        } catch (IOException e) {
+            e.printStackTrace();
             return 1;
         }
     }
 
-    private static int doConvert(String[] args, InputStream input, OutputStream output) {
+    private static void doConvert(InputStream input, OutputStream output, ConversionOptions options) throws IOException
+    {
+        BufferedImage image = convertToImage(input, options);
+
+        MemoryCacheImageOutputStream memCache = new MemoryCacheImageOutputStream(output);
+        ImageIO.write(image, "png", memCache);
+        memCache.flush();
+    }
+
+    private static BufferedImage convertToImage(InputStream input, ConversionOptions options) throws IOException
+    {
+        TextGrid grid = new TextGrid();
+        if (options.processingOptions.getCustomShapes() != null) {
+            grid.addToMarkupTags(options.processingOptions.getCustomShapes().keySet());
+        }
+
+        grid.loadFrom(input, options.processingOptions);
+
+        if (options.processingOptions.printDebugOutput()) {
+            grid.printDebug();
+        }
+
+        Diagram diagram = new Diagram(grid, options);
+
+        return new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+    }
+
+    private static ConversionOptions parseCommandLineOptions(Iterator<String> args) throws UnsupportedEncodingException
+    {
         Map<String, String> cmdLine = new HashMap<String, String>();
 
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
+        while (args.hasNext()) {
+            String arg = args.next();
             if (arg.equals("-v") || arg.equals("--verbose")) {
                 cmdLine.put("verbose", "true");
             } else if (arg.equals("-o") || arg.equals("--overwrite")) {
@@ -82,70 +152,22 @@ public class CommandLineConverter {
             } else if (arg.equals("-T") || arg.equals("--transparent")) {
                 cmdLine.put("transparent", "true");
             } else if (arg.equals("-e") || arg.equals("--encoding")) {
-                cmdLine.put("encoding", args[++i]);
+                cmdLine.put("encoding", args.next());
             } else if (arg.equals("-s") || arg.equals("--scale")) {
-                cmdLine.put("scale", args[++i]);
+                cmdLine.put("scale", args.next());
             } else if (arg.equals("-t") || arg.equals("--tabs")) {
-                cmdLine.put("tabs", args[++i]);
+                cmdLine.put("tabs", args.next());
             } else if (arg.equals("-b") || arg.equals("--background")) {
-                cmdLine.put("background", args[++i]);
+                cmdLine.put("background", args.next());
             } else if (arg.equals("-f") || arg.equals("--font")) {
-                cmdLine.put("font", args[++i]);
+                cmdLine.put("font", args.next());
             } else if (arg.equals("-F") || arg.equals("--font-size")) {
-                cmdLine.put("font-size", args[++i]);
+                cmdLine.put("font-size", args.next());
+            } else {
+                break;
             }
         }
 
-        ///// parse command line options
-        ConversionOptions options;
-        try {
-            options = new ConversionOptions(cmdLine);
-        } catch (UnsupportedEncodingException e2) {
-            printException(e2, output);
-            return 2;
-        } catch (IllegalArgumentException e2) {
-            printException(e2, output);
-            return 2;
-        }
-
-        TextGrid grid = new TextGrid();
-        if (options.processingOptions.getCustomShapes() != null) {
-            grid.addToMarkupTags(options.processingOptions.getCustomShapes().keySet());
-        }
-
-        try {
-            grid.loadFrom(input, options.processingOptions);
-        } catch (UnsupportedEncodingException e1) {
-            printException(e1, output);
-            return 1;
-        } catch (IOException e1) {
-            printException(e1, output);
-            return 1;
-        }
-
-        if (options.processingOptions.printDebugOutput()) {
-            grid.printDebug();
-        }
-
-        Diagram diagram = new Diagram(grid, options);
-
-        BufferedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
-
-        try {
-            MemoryCacheImageOutputStream memCache = new MemoryCacheImageOutputStream(output);
-            ImageIO.write(image, "png", memCache);
-            memCache.flush();
-        } catch (IOException e) {
-            printException(e, output);
-            return 1;
-        }
-
-        return 0;
-    }
-
-    private static void printException(Exception e2, OutputStream output) {
-        PrintStream printStream = new PrintStream(output);
-        e2.printStackTrace(printStream);
-        printStream.flush();
+        return new ConversionOptions(cmdLine);
     }
 }

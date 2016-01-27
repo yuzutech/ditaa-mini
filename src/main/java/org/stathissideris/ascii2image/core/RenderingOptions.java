@@ -1,112 +1,125 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- * 
+ * <p/>
  * Copyright (C) 2004-2011 Efstathios Sideris
- *
+ * <p/>
  * ditaa is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- *
+ * <p/>
  * ditaa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
- *   
  */
 package org.stathissideris.ascii2image.core;
+
+import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 
 import java.awt.*;
 import java.util.HashMap;
 
-import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
-
 /**
- * 
+ *
  * @author Efstathios Sideris
  */
 public class RenderingOptions {
 
-	private HashMap<String, CustomShapeDefinition> customShapes;
-	
-	private boolean dropShadows = true;
-	private boolean renderDebugLines = false;
-	private boolean antialias = true;
+    private HashMap<String, CustomShapeDefinition> customShapes;
+
+    private boolean dropShadows = true;
+    private boolean renderDebugLines = false;
+    private boolean antialias = true;
     private boolean fixedSlope = false;
 
-	private int cellWidth = 10;
-	private int cellHeight = 14;
-	
-	private float scale = 1;
-	
-	private Color backgroundColor = Color.white;
-	private String fontName = "Dialog";
-	private int fontStyle = Font.BOLD;
-	private int fontSize = 12;
+    private int cellWidth = 10;
+    private int cellHeight = 14;
 
-	public int getCellHeight() {
-		return cellHeight;
-	}
+    private float scale = 1;
 
-	public int getCellWidth() {
-		return cellWidth;
-	}
+    private Color backgroundColor = Color.white;
+    private String fontName = "Dialog";
+    private int fontStyle = Font.BOLD;
+    private int fontSize = 12;
 
-	public boolean dropShadows() {
-		return dropShadows;
-	}
+    public int getCellHeight()
+    {
+        return cellHeight;
+    }
 
-	public boolean renderDebugLines() {
-		return renderDebugLines;
-	}
+    public int getCellWidth()
+    {
+        return cellWidth;
+    }
 
-	public float getScale() {
-		return scale;
-	}
+    public boolean dropShadows()
+    {
+        return dropShadows;
+    }
 
-	public void setDropShadows(boolean b) {
-		dropShadows = b;
-	}
+    public boolean renderDebugLines()
+    {
+        return renderDebugLines;
+    }
 
-	public void setRenderDebugLines(boolean b) {
-		renderDebugLines = b;
-	}
+    public float getScale()
+    {
+        return scale;
+    }
 
-	public void setScale(float f) {
-		scale = f;
-		cellWidth *= scale;
-		cellHeight *= scale;
-	}
+    public void setDropShadows(boolean b)
+    {
+        dropShadows = b;
+    }
 
-	public boolean performAntialias() {
-		return antialias;
-	}
+    public void setRenderDebugLines(boolean b)
+    {
+        renderDebugLines = b;
+    }
 
-	public void setAntialias(boolean b) {
-		antialias = b;
-	}
+    public void setScale(float f)
+    {
+        scale = f;
+        cellWidth *= scale;
+        cellHeight *= scale;
+    }
 
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
+    public boolean performAntialias()
+    {
+        return antialias;
+    }
 
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
-	
-	public boolean needsTransparency() {
-		return backgroundColor.getAlpha() < 255;
-	}
+    public void setAntialias(boolean b)
+    {
+        antialias = b;
+    }
 
-	/**
+    public Color getBackgroundColor()
+    {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor)
+    {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public boolean needsTransparency()
+    {
+        return backgroundColor.getAlpha() < 255;
+    }
+
+    /**
      * Should the sides of trapezoids and parallelograms have fixed width (false, default)
      * or fixed slope (true)?
      * @return true for fixed slope, false for fixed width
      */
-    public boolean isFixedSlope() {
+    public boolean isFixedSlope()
+    {
         return fixedSlope;
     }
 
@@ -115,37 +128,38 @@ public class RenderingOptions {
      * or fixed slope (true)?
      * @param b true for fixed slope, false for fixed width
      */
-    public void setFixedSlope(boolean b) {
+    public void setFixedSlope(boolean b)
+    {
         this.fixedSlope = b;
     }
 
-	public String getFontName()
-	{
-		return fontName;
-	}
+    public String getFontName()
+    {
+        return fontName;
+    }
 
-	public void setFontName(String fontName)
-	{
-		this.fontName = fontName;
-	}
+    public void setFontName(String fontName)
+    {
+        this.fontName = fontName;
+    }
 
-	public int getFontStyle()
-	{
-		return fontStyle;
-	}
+    public int getFontStyle()
+    {
+        return fontStyle;
+    }
 
-	public void setFontStyle(int fontStyle)
-	{
-		this.fontStyle = fontStyle;
-	}
+    public void setFontStyle(int fontStyle)
+    {
+        this.fontStyle = fontStyle;
+    }
 
-	public int getFontSize()
-	{
-		return fontSize;
-	}
+    public int getFontSize()
+    {
+        return fontSize;
+    }
 
-	public void setFontSize(int fontSize)
-	{
-		this.fontSize = fontSize;
-	}
+    public void setFontSize(int fontSize)
+    {
+        this.fontSize = fontSize;
+    }
 }

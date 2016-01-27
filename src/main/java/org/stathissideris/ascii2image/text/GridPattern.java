@@ -1,26 +1,24 @@
 /**
  * ditaa - Diagrams Through Ascii Art
- *
+ * <p/>
  * Copyright (C) 2004-2011 Efstathios Sideris
- *
+ * <p/>
  * ditaa is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- *
+ * <p/>
  * ditaa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public
  * License along with ditaa.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package org.stathissideris.ascii2image.text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.regex.Pattern;
 
 /**
@@ -79,7 +77,8 @@ public class GridPattern extends TextGrid {
 
     private static final boolean DEBUG = false;
 
-    public GridPattern(String row1, String row2, String row3) {
+    public GridPattern(String row1, String row2, String row3)
+    {
         super(Math.max(Math.max(row1.length(), row2.length()), row3.length()), 3);
         if (getHeight() != 3)
             throw new RuntimeException("This method can only be called for GridPatternS with height 3");
@@ -89,7 +88,8 @@ public class GridPattern extends TextGrid {
         prepareRegExps();
     }
 
-    public boolean isMatchedBy(TextGrid grid) {
+    public boolean isMatchedBy(TextGrid grid)
+    {
         for (int i = 0; i < grid.getHeight(); i++) {
             String row = grid.getRow(i).toString();
             Pattern regexp = regExps.get(i);
@@ -102,20 +102,21 @@ public class GridPattern extends TextGrid {
         return true;
     }
 
-    private void prepareRegExps() {
+    private void prepareRegExps()
+    {
         regExps.clear();
         if (DEBUG)
             System.out.println("Trying to match:");
-        Iterator<StringBuilder> it = getRows().iterator();
-        while (it.hasNext()) {
-            String row = it.next().toString();
+        for (StringBuilder stringBuilder : getRows()) {
+            String row = stringBuilder.toString();
             regExps.add(Pattern.compile(makeRegExp(row)));
             if (DEBUG)
                 System.out.println(row + " becomes " + makeRegExp(row));
         }
     }
 
-    private String makeRegExp(String pattern) {
+    private String makeRegExp(String pattern)
+    {
         StringBuilder result = new StringBuilder();
         int tokensHandled = 0;
         for (int i = 0; i < pattern.length() && tokensHandled < 3; i++) {
