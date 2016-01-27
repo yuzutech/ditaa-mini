@@ -39,8 +39,10 @@ public class CommandLineConverter {
     {
         try {
             convert(args);
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -48,6 +50,10 @@ public class CommandLineConverter {
     {
         Iterator<String> argsIt = Arrays.asList(args).iterator();
         ConversionOptions options = parseCommandLineOptions(argsIt);
+
+        if (!argsIt.hasNext()) {
+            throw new IOException("Input file not specified");
+        }
 
         String inputFile = argsIt.next();
         String outputFile;

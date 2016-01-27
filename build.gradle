@@ -12,3 +12,13 @@ compileJava {
 dependencies {
     testCompile 'junit:junit:4.12'
 }
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "org.stathissideris.ascii2image.core.CommandLineConverter",
+                "Implementation-Title": "Ditaamini",
+                "Implementation-Version": version
+        )
+    }
+}
