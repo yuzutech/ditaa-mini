@@ -26,10 +26,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Efstathios Sideris
@@ -48,7 +45,7 @@ public class CommandLineConverter {
 
     private static void convert(String[] args) throws IOException
     {
-        Iterator<String> argsIt = Arrays.asList(args).iterator();
+        ListIterator<String> argsIt = Arrays.asList(args).listIterator();
         ConversionOptions options = parseCommandLineOptions(argsIt);
 
         if (!argsIt.hasNext()) {
@@ -95,7 +92,7 @@ public class CommandLineConverter {
     public static int convert(String[] args, InputStream input, OutputStream output)
     {
         try {
-            doConvert(input, output, parseCommandLineOptions(Arrays.asList(args).iterator()));
+            doConvert(input, output, parseCommandLineOptions(Arrays.asList(args).listIterator()));
             return 0;
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -133,7 +130,7 @@ public class CommandLineConverter {
         return new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
     }
 
-    private static ConversionOptions parseCommandLineOptions(Iterator<String> args) throws UnsupportedEncodingException
+    private static ConversionOptions parseCommandLineOptions(ListIterator<String> args) throws UnsupportedEncodingException
     {
         Map<String, String> cmdLine = new HashMap<String, String>();
 
@@ -170,6 +167,7 @@ public class CommandLineConverter {
             } else if (arg.equals("-F") || arg.equals("--font-size")) {
                 cmdLine.put("font-size", args.next());
             } else {
+                args.previous();
                 break;
             }
         }
