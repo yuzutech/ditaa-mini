@@ -20,12 +20,14 @@ package org.stathissideris.ascii2image.core;
 
 import org.stathissideris.ascii2image.graphics.BitmapRenderer;
 import org.stathissideris.ascii2image.graphics.Diagram;
+import org.stathissideris.ascii2image.graphics.SVGRenderer;
 import org.stathissideris.ascii2image.text.TextGrid;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -60,7 +62,7 @@ public class CommandLineConverter {
             if (inputFile.equals("-")) {
                 outputFile = "-";
             } else {
-                outputFile = inputFile + ".png";
+                outputFile = inputFile + "." + options.renderingOptions.getImageType().getExtension();
             }
         }
 
@@ -105,14 +107,28 @@ public class CommandLineConverter {
 
     private static void doConvert(InputStream input, OutputStream output, ConversionOptions options) throws IOException
     {
-        BufferedImage image = convertToImage(input, options);
+        Diagram diagram = convertToImage(input, options);
 
-        MemoryCacheImageOutputStream memCache = new MemoryCacheImageOutputStream(output);
-        ImageIO.write(image, "png", memCache);
-        memCache.flush();
+        RenderingOptions.ImageType imageType = options.renderingOptions.getImageType();
+
+        if (imageType == RenderingOptions.ImageType.SVG) {
+            String content = new SVGRenderer().renderToImage(diagram, options.renderingOptions);
+            OutputStreamWriter writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
+            try {
+                writer.write(content);
+            } finally {
+                writer.flush();
+            }
+        } else {
+            BufferedImage image = new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+
+            MemoryCacheImageOutputStream memCache = new MemoryCacheImageOutputStream(output);
+            ImageIO.write(image, imageType.getFormatName(), memCache);
+            memCache.flush();
+        }
     }
 
-    private static BufferedImage convertToImage(InputStream input, ConversionOptions options) throws IOException
+    private static Diagram convertToImage(InputStream input, ConversionOptions options) throws IOException
     {
         TextGrid grid = new TextGrid();
         if (options.processingOptions.getCustomShapes() != null) {
@@ -125,9 +141,7 @@ public class CommandLineConverter {
             grid.printDebug();
         }
 
-        Diagram diagram = new Diagram(grid, options);
-
-        return new BitmapRenderer().renderToImage(diagram, options.renderingOptions);
+        return new Diagram(grid, options);
     }
 
     private static ConversionOptions parseCommandLineOptions(ListIterator<String> args) throws UnsupportedEncodingException
@@ -166,6 +180,10 @@ public class CommandLineConverter {
                 cmdLine.put("font", args.next());
             } else if (arg.equals("-F") || arg.equals("--font-size")) {
                 cmdLine.put("font-size", args.next());
+            } else if (arg.equals("--svg")) {
+                cmdLine.put("svg", "true");
+            } else if (arg.equals("--svg-font-url")) {
+                cmdLine.put("svg-font-url", args.next());
             } else {
                 args.previous();
                 break;

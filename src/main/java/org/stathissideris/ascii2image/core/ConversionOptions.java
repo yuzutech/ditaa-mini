@@ -105,5 +105,13 @@ public class ConversionOptions {
             new String(new byte[2], encoding);
             processingOptions.setCharacterEncoding(encoding);
         }
+
+        if (cmdLine.containsKey("svg")){
+            renderingOptions.setImageType(RenderingOptions.ImageType.SVG);
+        }
+
+        if (cmdLine.containsKey("svg-font-url")){
+            renderingOptions.setFontURL(cmdLine.get("svg-font-url"));
+        }
     }
 }

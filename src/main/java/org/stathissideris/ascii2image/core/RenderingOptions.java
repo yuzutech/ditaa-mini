@@ -24,10 +24,34 @@ import java.awt.*;
 import java.util.HashMap;
 
 /**
- *
  * @author Efstathios Sideris
  */
-public class RenderingOptions {
+public class RenderingOptions
+{
+    public enum ImageType
+    {
+        PNG("png", "png"),
+        SVG("svg", null);
+
+        private String extension;
+        private String formatName;
+
+        ImageType(String extension, String formatName)
+        {
+            this.extension = extension;
+            this.formatName = formatName;
+        }
+
+        public String getExtension()
+        {
+            return extension;
+        }
+
+        public String getFormatName()
+        {
+            return formatName;
+        }
+    }
 
     private HashMap<String, CustomShapeDefinition> customShapes;
 
@@ -45,6 +69,36 @@ public class RenderingOptions {
     private String fontName = "Dialog";
     private int fontStyle = Font.BOLD;
     private int fontSize = 12;
+    private String fontFamily = "Courier";
+    private String fontURL = null;
+
+    private ImageType imageType = ImageType.PNG;
+
+    public ImageType getImageType()
+    {
+        return imageType;
+    }
+
+    public void setImageType(ImageType type)
+    {
+        imageType = type;
+    }
+
+    public String getFontFamily()
+    {
+        return fontFamily;
+    }
+
+    public String getFontURL()
+    {
+        return fontURL;
+    }
+
+    public void setFontURL(String url)
+    {
+        fontFamily = "Custom";
+        fontURL = url;
+    }
 
     public int getCellHeight()
     {
@@ -116,6 +170,7 @@ public class RenderingOptions {
     /**
      * Should the sides of trapezoids and parallelograms have fixed width (false, default)
      * or fixed slope (true)?
+     *
      * @return true for fixed slope, false for fixed width
      */
     public boolean isFixedSlope()
@@ -126,6 +181,7 @@ public class RenderingOptions {
     /**
      * Should the sides of trapezoids and parallelograms have fixed width (false, default)
      * or fixed slope (true)?
+     *
      * @param b true for fixed slope, false for fixed width
      */
     public void setFixedSlope(boolean b)
