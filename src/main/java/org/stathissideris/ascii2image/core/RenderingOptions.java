@@ -69,7 +69,7 @@ public class RenderingOptions
     private String fontName = "Dialog";
     private int fontStyle = Font.BOLD;
     private int fontSize = 12;
-    private String fontFamily = "Courier";
+    private String fontFamily = "sans-serif";
     private String fontURL = null;
 
     private ImageType imageType = ImageType.PNG;

@@ -82,18 +82,29 @@ public class TestConversion {
     @Test
     public void testConversion() throws IOException
     {
+        convert(".png");
+    }
+
+    @Test
+    public void testSVGConversion() throws IOException
+    {
+        convert(".svg", "--svg");
+    }
+
+    private void convert(String extension, String... options) throws IOException
+    {
         InputStream in = getClass().getClassLoader().getResourceAsStream(inputFile);
         if (in == null) {
             Assert.fail("Could not find input file " + inputFile);
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int result = CommandLineConverter.convert(new String[]{}, in, out);
+        int result = CommandLineConverter.convert(options, in, out);
         out.close();
 
         assertEquals(0, result);
 
         if (WRITE_OUTPUT) {
-            FileOutputStream fout = new FileOutputStream(new File(inputFile).getName() + ".png");
+            FileOutputStream fout = new FileOutputStream(new File(inputFile).getName() + extension);
             fout.write(out.toByteArray());
             fout.close();
         }
