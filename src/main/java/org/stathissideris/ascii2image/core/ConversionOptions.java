@@ -20,6 +20,9 @@ package org.stathissideris.ascii2image.core;
 
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -31,6 +34,69 @@ public class ConversionOptions {
             new ProcessingOptions();
     public RenderingOptions renderingOptions =
             new RenderingOptions();
+
+    public ConversionOptions()
+    {
+    }
+
+    public static ConversionOptions parseCommandLineOptions(String[] args) throws UnsupportedEncodingException
+    {
+        return parseCommandLineOptions(Arrays.asList(args).listIterator());
+    }
+
+    public static ConversionOptions parseCommandLineOptions(ListIterator<String> args) throws UnsupportedEncodingException
+    {
+        ConversionOptions options = new ConversionOptions();
+
+        while (args.hasNext()) {
+            String arg = args.next();
+            if (arg.equals("-v") || arg.equals("--verbose")) {
+                options.processingOptions.setVerbose(true);
+            } else if (arg.equals("-o") || arg.equals("--overwrite")) {
+                options.processingOptions.setOverwriteFiles(true);
+            } else if (arg.equals("-S") || arg.equals("--no-shadows")) {
+                options.renderingOptions.setDropShadows(false);
+            } else if (arg.equals("-A") || arg.equals("--no-antialias")) {
+                options.renderingOptions.setAntialias(false);
+            } else if (arg.equals("-W") || arg.equals("--fixed-slope")) {
+                options.renderingOptions.setFixedSlope(true);
+            } else if (arg.equals("-d") || arg.equals("--debug")) {
+                options.setDebug(true);
+            } else if (arg.equals("-r") || arg.equals("--round-corners")) {
+                options.processingOptions.setAllCornersAreRound(true);
+            } else if (arg.equals("-E") || arg.equals("--no-separation")) {
+                options.processingOptions.setPerformSeparationOfCommonEdges(false);
+            } else if (arg.equals("-T") || arg.equals("--transparent")) {
+                options.renderingOptions.setBackgroundColor(new Color(0, 0, 0, 0));
+            } else if (arg.equals("-e") || arg.equals("--encoding")) {
+                options.processingOptions.setCharacterEncoding(Charset.forName(args.next()));
+            } else if (arg.equals("-s") || arg.equals("--scale")) {
+                Float scale = Float.parseFloat(args.next());
+                options.renderingOptions.setScale(scale);
+            } else if (arg.equals("-t") || arg.equals("--tabs")) {
+                int tabSize = Integer.parseInt(args.next());
+                if (tabSize < 0) tabSize = 0;
+                options.processingOptions.setTabSize(tabSize);
+            } else if (arg.equals("-b") || arg.equals("--background")) {
+                Color background = parseColor(args.next());
+                options.renderingOptions.setBackgroundColor(background);
+            } else if (arg.equals("-f") || arg.equals("--font")) {
+                options.renderingOptions.setFontName(args.next());
+            } else if (arg.equals("-F") || arg.equals("--font-size")) {
+                Integer size = Integer.parseInt(args.next());
+                options.renderingOptions.setFontSize(size);
+            } else if (arg.equals("--svg")) {
+                options.renderingOptions.setImageType(RenderingOptions.ImageType.SVG);
+            } else if (arg.equals("--svg-font-url")) {
+                options.renderingOptions.setFontURL(args.next());
+            } else {
+                args.previous();
+                break;
+            }
+        }
+
+        return options;
+    }
 
     public void setDebug(boolean value)
     {
@@ -55,63 +121,6 @@ public class ConversionOptions {
             );
         } else {
             throw new IllegalArgumentException("Cannot interpret \"" + hexString + "\" as background colour. It needs to be a 6- or 8-digit hex number, depending on whether you have transparency or not (same as HTML).");
-        }
-    }
-
-    public ConversionOptions(Map<String, String> cmdLine) throws UnsupportedEncodingException
-    {
-        processingOptions.setVerbose(cmdLine.containsKey("verbose"));
-        renderingOptions.setDropShadows(!cmdLine.containsKey("no-shadows"));
-        this.setDebug(cmdLine.containsKey("debug"));
-        processingOptions.setOverwriteFiles(cmdLine.containsKey("overwrite"));
-
-        if (cmdLine.containsKey("scale")) {
-            Float scale = Float.parseFloat(cmdLine.get("scale"));
-            renderingOptions.setScale(scale);
-        }
-
-        processingOptions.setAllCornersAreRound(cmdLine.containsKey("round-corners"));
-        processingOptions.setPerformSeparationOfCommonEdges(!cmdLine.containsKey("no-separation"));
-        renderingOptions.setAntialias(!cmdLine.containsKey("no-antialias"));
-        renderingOptions.setFixedSlope(cmdLine.containsKey("fixed-slope"));
-
-        if (cmdLine.containsKey("background")) {
-            String b = cmdLine.get("background");
-            Color background = parseColor(b);
-            renderingOptions.setBackgroundColor(background);
-        }
-
-        if (cmdLine.containsKey("transparent")) {
-            renderingOptions.setBackgroundColor(new Color(0, 0, 0, 0));
-        }
-
-        if (cmdLine.containsKey("font")) {
-            renderingOptions.setFontName(cmdLine.get("font"));
-        }
-
-        if (cmdLine.containsKey("font-size")) {
-            Integer size = Integer.parseInt(cmdLine.get("font-size"));
-            renderingOptions.setFontSize(size);
-        }
-
-        if (cmdLine.containsKey("tabs")) {
-            int tabSize = Integer.parseInt(cmdLine.get("tabs"));
-            if (tabSize < 0) tabSize = 0;
-            processingOptions.setTabSize(tabSize);
-        }
-
-        String encoding = cmdLine.get("encoding");
-        if (encoding != null) {
-            new String(new byte[2], encoding);
-            processingOptions.setCharacterEncoding(encoding);
-        }
-
-        if (cmdLine.containsKey("svg")){
-            renderingOptions.setImageType(RenderingOptions.ImageType.SVG);
-        }
-
-        if (cmdLine.containsKey("svg-font-url")){
-            renderingOptions.setFontURL(cmdLine.get("svg-font-url"));
         }
     }
 }

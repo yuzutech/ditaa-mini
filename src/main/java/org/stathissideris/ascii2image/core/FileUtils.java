@@ -19,17 +19,18 @@
 package org.stathissideris.ascii2image.core;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * @author Efstathios Sideris
  */
 public class FileUtils {
-    public static String readFile(InputStream is, String encoding) throws IOException
+    public static String readFile(InputStream is, Charset encoding) throws IOException
     {
         return readFile(is, encoding, -1);
     }
 
-    public static String readFile(InputStream is, String encoding, long length) throws IOException
+    public static String readFile(InputStream is, Charset encoding, long length) throws IOException
     {
         byte[] bytes;
         if (length < 0) {

@@ -23,6 +23,7 @@ import org.stathissideris.ascii2image.core.ProcessingOptions;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1261,12 +1262,22 @@ public class TextGrid {
 
     public void loadFrom(InputStream is, ProcessingOptions options) throws IOException
     {
-        String encoding = (options == null) ? null : options.getCharacterEncoding();
+        Charset encoding = (options == null) ? Charset.defaultCharset() : options.getCharacterEncoding();
         ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
         String[] linesArray = FileUtils.readFile(is, encoding).split("(\r)?\n");
         for (String line : linesArray) {
             lines.add(new StringBuilder(line));
         }
+
+        initialiseWithLines(lines, options);
+    }
+
+    public void initialiseWithText(String text, ProcessingOptions options) throws UnsupportedEncodingException {
+
+        ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
+        String[] linesArray = text.split("(\r)?\n");
+        for(int i = 0; i  < linesArray.length; i++)
+            lines.add(new StringBuilder(linesArray[i]));
 
         initialiseWithLines(lines, options);
     }
@@ -1296,7 +1307,7 @@ public class TextGrid {
         int maxLength = 0;
         int index = 0;
 
-        String encoding = null;
+        Charset encoding = Charset.defaultCharset();
         if (options != null) encoding = options.getCharacterEncoding();
 
         Iterator<StringBuilder> it = rows.iterator();

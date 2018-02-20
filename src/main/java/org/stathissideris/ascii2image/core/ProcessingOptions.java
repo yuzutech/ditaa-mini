@@ -20,6 +20,7 @@ package org.stathissideris.ascii2image.core;
 
 import org.stathissideris.ascii2image.graphics.CustomShapeDefinition;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
@@ -57,7 +58,7 @@ public class ProcessingOptions {
     private String inputFilename;
     private String outputFilename;
 
-    private String characterEncoding = null;
+    private Charset characterEncoding = Charset.defaultCharset();
 
     public boolean areAllCornersRound()
     {
@@ -169,12 +170,12 @@ public class ProcessingOptions {
         tabSize = i;
     }
 
-    public String getCharacterEncoding()
+    public Charset getCharacterEncoding()
     {
         return characterEncoding;
     }
 
-    public void setCharacterEncoding(String characterEncoding)
+    public void setCharacterEncoding(Charset characterEncoding)
     {
         this.characterEncoding = characterEncoding;
     }

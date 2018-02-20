@@ -48,7 +48,7 @@ public class CommandLineConverter {
     private static void convert(String[] args) throws IOException
     {
         ListIterator<String> argsIt = Arrays.asList(args).listIterator();
-        ConversionOptions options = parseCommandLineOptions(argsIt);
+        ConversionOptions options = ConversionOptions.parseCommandLineOptions(argsIt);
 
         if (!argsIt.hasNext()) {
             throw new IOException("Input file not specified");
@@ -94,7 +94,7 @@ public class CommandLineConverter {
     public static int convert(String[] args, InputStream input, OutputStream output)
     {
         try {
-            doConvert(input, output, parseCommandLineOptions(Arrays.asList(args).listIterator()));
+            doConvert(input, output, ConversionOptions.parseCommandLineOptions(args));
             return 0;
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -144,52 +144,4 @@ public class CommandLineConverter {
         return new Diagram(grid, options);
     }
 
-    private static ConversionOptions parseCommandLineOptions(ListIterator<String> args) throws UnsupportedEncodingException
-    {
-        Map<String, String> cmdLine = new HashMap<String, String>();
-
-        while (args.hasNext()) {
-            String arg = args.next();
-            if (arg.equals("-v") || arg.equals("--verbose")) {
-                cmdLine.put("verbose", "true");
-            } else if (arg.equals("-o") || arg.equals("--overwrite")) {
-                cmdLine.put("overwrite", "true");
-            } else if (arg.equals("-S") || arg.equals("--no-shadows")) {
-                cmdLine.put("no-shadows", "true");
-            } else if (arg.equals("-A") || arg.equals("--no-antialias")) {
-                cmdLine.put("no-antialias", "true");
-            } else if (arg.equals("-W") || arg.equals("--fixed-slope")) {
-                cmdLine.put("fixed-slope", "true");
-            } else if (arg.equals("-d") || arg.equals("--debug")) {
-                cmdLine.put("debug", "true");
-            } else if (arg.equals("-r") || arg.equals("--round-corners")) {
-                cmdLine.put("round-corners", "true");
-            } else if (arg.equals("-E") || arg.equals("--no-separation")) {
-                cmdLine.put("no-separation", "true");
-            } else if (arg.equals("-T") || arg.equals("--transparent")) {
-                cmdLine.put("transparent", "true");
-            } else if (arg.equals("-e") || arg.equals("--encoding")) {
-                cmdLine.put("encoding", args.next());
-            } else if (arg.equals("-s") || arg.equals("--scale")) {
-                cmdLine.put("scale", args.next());
-            } else if (arg.equals("-t") || arg.equals("--tabs")) {
-                cmdLine.put("tabs", args.next());
-            } else if (arg.equals("-b") || arg.equals("--background")) {
-                cmdLine.put("background", args.next());
-            } else if (arg.equals("-f") || arg.equals("--font")) {
-                cmdLine.put("font", args.next());
-            } else if (arg.equals("-F") || arg.equals("--font-size")) {
-                cmdLine.put("font-size", args.next());
-            } else if (arg.equals("--svg")) {
-                cmdLine.put("svg", "true");
-            } else if (arg.equals("--svg-font-url")) {
-                cmdLine.put("svg-font-url", args.next());
-            } else {
-                args.previous();
-                break;
-            }
-        }
-
-        return new ConversionOptions(cmdLine);
-    }
 }
