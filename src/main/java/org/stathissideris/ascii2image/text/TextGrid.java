@@ -1307,16 +1307,9 @@ public class TextGrid {
         int maxLength = 0;
         int index = 0;
 
-        Charset encoding = Charset.defaultCharset();
-        if (options != null) encoding = options.getCharacterEncoding();
-
         Iterator<StringBuilder> it = rows.iterator();
         while (it.hasNext()) {
             String row = it.next().toString();
-            if (encoding != null) {
-                byte[] bytes = row.getBytes();
-                row = new String(bytes, encoding);
-            }
             if (row.length() > maxLength) maxLength = row.length();
             rows.set(index, new StringBuilder(row));
             index++;
