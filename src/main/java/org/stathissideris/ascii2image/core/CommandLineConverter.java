@@ -138,7 +138,7 @@ public class CommandLineConverter {
         grid.loadFrom(input, options.processingOptions);
 
         if (options.processingOptions.printDebugOutput()) {
-            grid.printDebug();
+            grid.printDebug(System.out);
         }
 
         return new Diagram(grid, options);

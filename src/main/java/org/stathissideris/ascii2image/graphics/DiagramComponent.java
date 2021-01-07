@@ -82,7 +82,7 @@ public abstract class DiagramComponent {
 
         if (DEBUG) {
             System.out.println("Making closed shape from buffer:");
-            workGrid.printDebug();
+            workGrid.printDebug(System.out);
         }
 
         TextGrid.Cell start = cells.getFirst();

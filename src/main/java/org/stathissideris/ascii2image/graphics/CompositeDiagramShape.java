@@ -53,7 +53,7 @@ public class CompositeDiagramShape extends DiagramComponent {
 
         if (DEBUG) {
             System.out.println("Making composite shape from grid:");
-            workGrid.printDebug();
+            workGrid.printDebug(System.out);
         }
 
 

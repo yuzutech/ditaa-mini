@@ -122,7 +122,7 @@ public class Diagram {
         TextGrid workGrid = new TextGrid(grid);
         workGrid.replaceTypeOnLine();
         workGrid.replacePointMarkersOnLine();
-        if (DEBUG) workGrid.printDebug();
+        if (DEBUG) workGrid.printDebug(System.out);
 
         int width = grid.getWidth();
         int height = grid.getHeight();
@@ -135,7 +135,7 @@ public class Diagram {
         if (DEBUG) {
             System.out.println("******* Distinct shapes found using AbstractionGrid *******");
             for (CellSet set : boundarySetsStep1) {
-                set.printAsGrid();
+                set.printAsGrid(System.out);
             }
             System.out.println("******* Same set of shapes after processing them by filling *******");
         }
@@ -171,7 +171,7 @@ public class Diagram {
                         if (DEBUG) {
                             //System.out.println("Fill buffer:");
                             //fillBuffer.printDebug();
-                            boundaries.makeScaledOneThirdEquivalent().printAsGrid();
+                            boundaries.makeScaledOneThirdEquivalent().printAsGrid(System.out);
                             System.out.println("-----------------------------------");
                         }
 
@@ -187,7 +187,7 @@ public class Diagram {
 
         if (DEBUG) {
             for (CellSet set : boundarySetsStep2) {
-                set.printAsGrid();
+                set.printAsGrid(System.out);
             }
         }
 
@@ -220,7 +220,7 @@ public class Diagram {
                 if (type == CellSet.TYPE_CLOSED) System.out.println("Closed boundaries:");
                 else if (type == CellSet.TYPE_OPEN) System.out.println("Open boundaries:");
                 else if (type == CellSet.TYPE_MIXED) System.out.println("Mixed boundaries:");
-                set.printAsGrid();
+                set.printAsGrid(System.out);
             }
         }
 
@@ -292,7 +292,7 @@ public class Diagram {
                     if (type == CellSet.TYPE_CLOSED) System.out.println("Closed boundaries:");
                     else if (type == CellSet.TYPE_OPEN) System.out.println("Open boundaries:");
                     else if (type == CellSet.TYPE_MIXED) System.out.println("Mixed boundaries:");
-                    set.printAsGrid();
+                    set.printAsGrid(System.out);
                 }
             }
         }
@@ -312,7 +312,7 @@ public class Diagram {
         ArrayList<DiagramShape> closedShapes = new ArrayList<DiagramShape>();
         for (CellSet set : closed) {
             if (DEBUG_MAKE_SHAPES) {
-                set.printAsGrid();
+                set.printAsGrid(System.out);
             }
 
             DiagramShape shape = DiagramComponent.createClosedFromBoundaryCells(workGrid, set, cellWidth, cellHeight, allCornersRound);
@@ -604,7 +604,7 @@ public class Diagram {
             it = sets.iterator();
             while (it.hasNext()) {
                 CellSet set = (CellSet) it.next();
-                set.printAsGrid();
+                set.printAsGrid(System.out);
             }
         }
 
@@ -625,7 +625,7 @@ public class Diagram {
 
             if (DEBUG_VERBOSE) {
                 System.out.println("*** Deciding if the following should be removed:");
-                set.printAsGrid();
+                set.printAsGrid(System.out);
             }
 
             //find the other sets that have common cells with set
@@ -653,7 +653,7 @@ public class Diagram {
 
             if (DEBUG_VERBOSE) {
                 System.out.println("Largest:");
-                largest.printAsGrid();
+                largest.printAsGrid(System.out);
             }
 
             //see if largest is sum of others
@@ -666,13 +666,13 @@ public class Diagram {
                 CellSet set2 = it2.next();
                 if (DEBUG_VERBOSE) {
                     System.out.println("One of smalls:");
-                    set2.printAsGrid();
+                    set2.printAsGrid(System.out);
                 }
                 gridOfSmalls.fillCellsWith(set2, '*');
             }
             if (DEBUG_VERBOSE) {
                 System.out.println("Sum of smalls:");
-                gridOfSmalls.printDebug();
+                gridOfSmalls.printDebug(System.out);
             }
             TextGrid gridLargest = new TextGrid(largest.getMaxX() + 2, largest.getMaxY() + 2);
             gridLargest.fillCellsWith(largest, '*');
@@ -683,7 +683,7 @@ public class Diagram {
                 toBeRemovedIndices.add(index);
                 if (DEBUG) {
                     System.out.println("Decided to remove set:");
-                    largest.printAsGrid();
+                    largest.printAsGrid(System.out);
                 }
             } /*else if (DEBUG){
                 System.out.println("This set WILL NOT be removed:");
@@ -709,7 +709,7 @@ public class Diagram {
             it = sets.iterator();
             while (it.hasNext()) {
                 CellSet set = (CellSet) it.next();
-                set.printAsGrid();
+                set.printAsGrid(System.out);
             }
         }
 

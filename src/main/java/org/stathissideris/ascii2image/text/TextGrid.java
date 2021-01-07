@@ -202,18 +202,25 @@ public class TextGrid {
         return rows.size();
     }
 
-    public void printDebug()
+    public void printDebug(PrintStream out)
+    {
+        PrintWriter pw = new PrintWriter(out);
+        printDebug(pw);
+        pw.flush();
+    }
+
+    public void printDebug(PrintWriter out)
     {
         Iterator<StringBuilder> it = rows.iterator();
         int i = 0;
-        System.out.println(
+        out.println(
                 "    "
                         + StringUtils.repeatString("0123456789", (int) Math.floor(getWidth() / 10) + 1));
         while (it.hasNext()) {
             String row = it.next().toString();
             String index = Integer.toString(i);
             if (i < 10) index = " " + index;
-            System.out.println(index + " (" + row + ")");
+            out.println(index + " (" + row + ")");
             i++;
         }
     }
@@ -989,10 +996,15 @@ public class TextGrid {
         if (isLine(cell)) return followLine(cell, blocked);
         if (isStub(cell)) return followStub(cell, blocked);
         if (isCrossOnLine(cell)) return followCrossOnLine(cell, blocked);
-        System.err.println("Umbiguous input at position " + cell + ":");
+
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("Ambiguous input at position " + cell + ":");
         TextGrid subGrid = getTestingSubGrid(cell);
-        subGrid.printDebug();
-        throw new RuntimeException("Cannot follow cell " + cell + ": cannot determine cell type");
+        subGrid.printDebug(pw);
+        pw.close();
+
+        throw new RuntimeException(sw.toString());
     }
 
     public String getCellTypeAsString(Cell cell)

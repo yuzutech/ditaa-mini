@@ -44,9 +44,9 @@ public class AbstractionGrid {
 
         if (DEBUG) {
             System.out.println("Making AbstractionGrid using buffer:");
-            textGrid.printDebug();
+            textGrid.printDebug(System.out);
             System.out.println("...and the following CellSet:");
-            cellSet.printAsGrid();
+            cellSet.printAsGrid(System.out);
         }
 
         for (TextGrid.Cell cell : cellSet) {
@@ -82,7 +82,7 @@ public class AbstractionGrid {
 
         if (DEBUG) {
             System.out.println("...the resulting AbstractionGrid is:");
-            grid.printDebug();
+            grid.printDebug(System.out);
         }
     }
 
@@ -117,9 +117,9 @@ public class AbstractionGrid {
         }
         if (DEBUG) {
             System.out.println("Getting AbstractionGrid as textGrid.\nAbstractionGrid:");
-            grid.printDebug();
+            grid.printDebug(System.out);
             System.out.println("...as text grid:");
-            result.printDebug();
+            result.printDebug(System.out);
         }
 
         return result;

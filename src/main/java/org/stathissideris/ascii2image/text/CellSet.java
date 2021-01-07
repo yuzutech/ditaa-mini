@@ -18,6 +18,7 @@
  */
 package org.stathissideris.ascii2image.text;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -78,11 +79,11 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         return internalSet.iterator().next();
     }
 
-    public void printAsGrid()
+    public void printAsGrid(PrintStream out)
     {
         TextGrid grid = new TextGrid(getMaxX() + 2, getMaxY() + 2);
         grid.fillCellsWith(this, '*');
-        grid.printDebug();
+        grid.printDebug(out);
     }
 
     public String getCellsAsString()
@@ -264,7 +265,7 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         temp.fillContinuousArea(fillCell, '*');
         if (VERBOSE_DEBUG) {
             System.out.println("Buffer after filling:");
-            temp.printDebug();
+            temp.printDebug(System.out);
         }
 
         if (temp.hasBlankCells()) return TYPE_HAS_CLOSED_AREA;
@@ -512,7 +513,7 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 
         if (DEBUG) {
             System.out.println("Breaking truly mixed boundaries below:");
-            workGrid.printDebug();
+            workGrid.printDebug(System.out);
         }
 
         for (TextGrid.Cell start : this) {
@@ -565,10 +566,10 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         CellSet whatsLeft = new CellSet(this);
         for (CellSet set : result) {
             whatsLeft.subtractSet(set);
-            if (DEBUG) set.printAsGrid();
+            if (DEBUG) set.printAsGrid(System.out);
         }
         result.add(whatsLeft);
-        if (DEBUG) whatsLeft.printAsGrid();
+        if (DEBUG) whatsLeft.printAsGrid(System.out);
 
         return result;
     }
@@ -587,7 +588,7 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         gridBig.fillCellsWith(this, '*');
         if (VERBOSE_DEBUG) {
             System.out.println("---> making ScaledOneThirdEquivalent of:");
-            gridBig.printDebug();
+            gridBig.printDebug(System.out);
         }
 
 
@@ -603,7 +604,7 @@ public class CellSet implements Iterable<TextGrid.Cell> {
 
         if (VERBOSE_DEBUG) {
             System.out.println("---> made into grid:");
-            gridSmall.printDebug();
+            gridSmall.printDebug(System.out);
         }
 
         return gridSmall.getAllNonBlank();
