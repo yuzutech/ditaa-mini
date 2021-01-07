@@ -24,6 +24,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 
 public class ImageHandler {
@@ -34,28 +35,16 @@ public class ImageHandler {
         return instance;
     }
 
-    private static final MediaTracker tracker = new MediaTracker(new JLabel());
-
     public Image loadImage(String filename)
     {
         URL url = ClassLoader.getSystemResource(filename);
-        Image result = null;
-        if (url != null)
-            result = Toolkit.getDefaultToolkit().getImage(url);
-        else
-            result = Toolkit.getDefaultToolkit().getImage(filename);
-//			result = null;
-
-        //wait for the image to load before returning
-        tracker.addImage(result, 0);
         try {
-            tracker.waitForID(0);
-        } catch (InterruptedException e) {
-            System.err.println("Failed to load image " + filename);
-            e.printStackTrace();
+            if (url != null)
+                return ImageIO.read(url);
+            else
+                return ImageIO.read(new File(filename));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
-        tracker.removeImage(result, 0);
-
-        return result;
     }
 }
