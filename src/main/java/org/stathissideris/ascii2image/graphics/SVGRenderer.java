@@ -207,8 +207,6 @@ public class SVGRenderer
                 if (shape.getType() == DiagramShape.TYPE_ARROWHEAD) {
                     writePath(writer, shape, commands, "none", fill);
                 }
-            } else if (shape.isStrokeDashed()) {
-                fill = "white";
             }
 
             if (shape.getType() != DiagramShape.TYPE_ARROWHEAD) {
