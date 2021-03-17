@@ -247,7 +247,7 @@ public class SVGRenderer
 
             if (shape.isStrokeDashed()) {
                 writer.writeAttribute("stroke-width", Float.toString(strokeWeight));
-                writer.writeAttribute("stroke-dasharray", String.format("%f,%f", dashInterval, dashInterval));
+                writer.writeAttribute("stroke-dasharray", dashInterval + "," + dashInterval);
                 writer.writeAttribute("stroke-miterlimit", "0");
                 writer.writeAttribute("stroke-linecap", "butt");
                 writer.writeAttribute("stroke-linejoin", "round");
