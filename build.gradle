@@ -16,7 +16,7 @@ dependencies {
 jar {
     manifest {
         attributes(
-                "Main-Class": "org.stathissideris.ascii2image.core.CommandLineConverter",
+                "Main-Class": "org.stathissideris.ditaa.core.CommandLineConverter",
                 "Implementation-Title": "Ditaamini",
                 "Implementation-Version": version
         )
