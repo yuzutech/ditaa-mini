@@ -1197,7 +1197,7 @@ public class TextGrid {
         if (oldChar == newChar) return cellsFilled;
         if (isOutOfBounds(seed)) return cellsFilled;
 
-        Stack<Cell> stack = new Stack<Cell>();
+        Deque<Cell> stack = new ArrayDeque<>();
 
         stack.push(seed);
 
@@ -1236,7 +1236,7 @@ public class TextGrid {
 
         char newChar = 1; //TODO: kludge
 
-        Stack<Cell> stack = new Stack<Cell>();
+        Deque<Cell> stack = new ArrayDeque<>();
 
         stack.push(seed);
 
@@ -1430,7 +1430,8 @@ public class TextGrid {
 
 
     public static class Cell {
-        public int x, y;
+        public final int x;
+        public final int y;
 
         public Cell(Cell cell)
         {

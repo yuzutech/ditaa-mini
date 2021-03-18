@@ -19,10 +19,7 @@
 package org.stathissideris.ascii2image.text;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -39,7 +36,16 @@ public class CellSet implements Iterable<TextGrid.Cell> {
     public static final int TYPE_HAS_CLOSED_AREA = 3;
     public static final int TYPE_UNDETERMINED = 4;
 
-    Set<TextGrid.Cell> internalSet = new HashSet<TextGrid.Cell>();
+    private static final Comparator<TextGrid.Cell> CELL_COMPARATOR = (o1, o2) -> {
+        int yResult = Integer.compare(o1.y, o2.y);
+        if (yResult == 0) {
+            return Integer.compare(o1.x, o2.x);
+        } else {
+            return yResult;
+        }
+    };
+
+    Set<TextGrid.Cell> internalSet = new TreeSet<>(CELL_COMPARATOR);
 
     private int type = TYPE_UNDETERMINED;
     private boolean typeIsValid = false;
@@ -59,14 +65,16 @@ public class CellSet implements Iterable<TextGrid.Cell> {
         return internalSet.iterator();
     }
 
-    public Object add(TextGrid.Cell cell)
+    public void add(TextGrid.Cell cell)
     {
-        return internalSet.add(cell);
+        internalSet.add(cell);
     }
 
     public void addAll(CellSet set)
     {
-        internalSet.addAll(set.internalSet);
+        for (TextGrid.Cell cell : set) {
+            add(cell);
+        }
     }
 
     public int size()
@@ -275,10 +283,11 @@ public class CellSet implements Iterable<TextGrid.Cell> {
     public void translate(int dx, int dy)
     {
         typeIsValid = false;
-        for (TextGrid.Cell cCell : this) {
-            cCell.x += dx;
-            cCell.y += dy;
+        TreeSet<TextGrid.Cell> newSet = new TreeSet<>(CELL_COMPARATOR);
+        for (TextGrid.Cell oldCell : internalSet) {
+            newSet.add(new TextGrid.Cell(oldCell.x + dx, oldCell.y + dy));
         }
+        internalSet = newSet;
     }
 
     public TextGrid.Cell find(TextGrid.Cell cell)
