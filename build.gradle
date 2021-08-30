@@ -1,3 +1,7 @@
+plugins {
+    id 'net.researchgate.release' version '2.8.1'
+}
+
 apply plugin: 'java'
 
 repositories {
@@ -18,7 +22,11 @@ jar {
         attributes(
                 "Main-Class": "org.stathissideris.ditaa.core.CommandLineConverter",
                 "Implementation-Title": "Ditaamini",
-                "Implementation-Version": version
+                "Implementation-Version": project.version
         )
     }
+}
+
+release {
+    tagTemplate = 'mini-${version}'
 }
