@@ -92,15 +92,18 @@ public class SVGRenderer
 
             writer.writeStartElement("defs");
 
-            writer.writeStartElement("style");
-            writer.writeAttribute("type", "text/css");
-            writer.writeCharacters(
-                    "@font-face {\n" +
-                            "  font-family: " + options.getFontFamily() + ";\n" +
-                            (options.getFontURL() != null ? "  src: url('" + options.getFontURL() + "');\n" : "") +
-                            "}"
-            );
-            writer.writeEndElement();
+            String fontURL = options.getFontURL();
+            if (fontURL != null) {
+                writer.writeStartElement("style");
+                writer.writeAttribute("type", "text/css");
+                writer.writeCharacters(
+                        "@font-face {\n" +
+                                "  font-family: " + options.getFontFamily() + ";\n" +
+                                "  src: url('" + fontURL + "');\n" +
+                                "}"
+                );
+                writer.writeEndElement();
+            }
 
             writer.writeStartElement("filter");
             writer.writeAttribute("id", "shadowBlur");
