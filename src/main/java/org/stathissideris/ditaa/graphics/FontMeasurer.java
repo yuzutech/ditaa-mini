@@ -30,12 +30,14 @@ import java.awt.image.BufferedImage;
 public class FontMeasurer {
 
     private final Font baseFont;
+    private final boolean fixedFontSize;
     private FontRenderContext fakeRenderContext;
     private Graphics2D fakeGraphics;
 
-    public FontMeasurer(String fontName, int fontStyle, int fontSize)
+    public FontMeasurer(Font font, boolean fixedFontSize)
     {
-        baseFont = new Font(fontName, fontStyle, fontSize);
+        baseFont = font;
+        this.fixedFontSize = fixedFontSize;
 
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         fakeGraphics = image.createGraphics();
@@ -102,6 +104,10 @@ public class FontMeasurer {
 
     public Font getFontFor(final int pixelHeight)
     {
+        if (fixedFontSize) {
+            return baseFont;
+        }
+
         FontPredicate predicate = new FontPredicate() {
             @Override
             public boolean test(Font font)
@@ -117,6 +123,10 @@ public class FontMeasurer {
 
     private Font deriveFont(FontPredicate predicate, float sizeDelta)
     {
+        if (fixedFontSize) {
+            return baseFont;
+        }
+
         Font currentFont = baseFont;
         float size = baseFont.getSize2D();
 

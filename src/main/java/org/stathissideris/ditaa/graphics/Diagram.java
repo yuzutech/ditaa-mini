@@ -111,9 +111,8 @@ public class Diagram {
         this.cellHeight = options.renderingOptions.getCellHeight();
 
         FontMeasurer fontMeasurer = new FontMeasurer(
-                options.renderingOptions.getFontName(),
-                options.renderingOptions.getFontStyle(),
-                options.renderingOptions.getFontSize()
+                options.renderingOptions.getFont(),
+                options.renderingOptions.isFixedFontSize()
         );
 
         width = grid.getWidth() * cellWidth;

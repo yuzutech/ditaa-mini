@@ -29,13 +29,17 @@ import java.util.ListIterator;
  */
 public class ConversionOptions {
 
-    public ProcessingOptions processingOptions =
-            new ProcessingOptions();
-    public RenderingOptions renderingOptions =
-            new RenderingOptions();
+    public final ProcessingOptions processingOptions;
+    public final RenderingOptions renderingOptions;
 
     public ConversionOptions()
     {
+        this(new ProcessingOptions(), new RenderingOptions());
+    }
+
+    public ConversionOptions(ProcessingOptions processingOptions, RenderingOptions renderingOptions) {
+        this.processingOptions = processingOptions;
+        this.renderingOptions = renderingOptions;
     }
 
     public static ConversionOptions parseCommandLineOptions(String[] args) throws UnsupportedEncodingException

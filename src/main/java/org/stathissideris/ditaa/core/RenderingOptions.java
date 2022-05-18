@@ -28,6 +28,9 @@ import java.util.HashMap;
  */
 public class RenderingOptions
 {
+
+    private boolean fixedFontSize;
+
     public enum ImageType
     {
         PNG("png", "png"),
@@ -66,9 +69,8 @@ public class RenderingOptions
     private float scale = 1;
 
     private Color backgroundColor = Color.white;
-    private String fontName = "Dialog";
-    private int fontStyle = Font.BOLD;
-    private int fontSize = 12;
+
+    private Font font = new Font("Dialog", Font.BOLD, 12);
     private String fontFamily = "sans-serif";
     private String fontURL = null;
 
@@ -191,31 +193,47 @@ public class RenderingOptions
 
     public String getFontName()
     {
-        return fontName;
+        return font.getFontName();
     }
 
     public void setFontName(String fontName)
     {
-        this.fontName = fontName;
+        setFont(new Font(fontName, getFontStyle(), getFontSize()));
     }
 
     public int getFontStyle()
     {
-        return fontStyle;
+        return font.getStyle();
     }
 
     public void setFontStyle(int fontStyle)
     {
-        this.fontStyle = fontStyle;
+        setFont(font.deriveFont(fontStyle));
     }
 
     public int getFontSize()
     {
-        return fontSize;
+        return font.getSize();
     }
 
     public void setFontSize(int fontSize)
     {
-        this.fontSize = fontSize;
+        setFont(font.deriveFont((float)fontSize));
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
+    public boolean isFixedFontSize() {
+        return fixedFontSize;
+    }
+
+    public void setFixedFontSize(boolean fixedFontSize) {
+        this.fixedFontSize = fixedFontSize;
     }
 }
