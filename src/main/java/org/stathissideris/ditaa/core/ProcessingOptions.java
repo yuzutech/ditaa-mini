@@ -18,6 +18,7 @@
  */
 package org.stathissideris.ditaa.core;
 
+import com.sun.org.apache.xpath.internal.objects.XString;
 import org.stathissideris.ditaa.graphics.CustomShapeDefinition;
 
 import java.nio.charset.Charset;
@@ -28,7 +29,6 @@ import java.util.HashMap;
  *
  */
 public class ProcessingOptions {
-
     private HashMap<String, CustomShapeDefinition> customShapes = new HashMap<String, CustomShapeDefinition>();
 
     private boolean beVerbose = false;
@@ -59,6 +59,9 @@ public class ProcessingOptions {
     private String outputFilename;
 
     private Charset characterEncoding = Charset.defaultCharset();
+
+    public static final String DEFAULT_BULLET_CHARS = "o*";
+    private String bulletChars = DEFAULT_BULLET_CHARS;
 
     public boolean areAllCornersRound()
     {
@@ -178,6 +181,14 @@ public class ProcessingOptions {
     public void setCharacterEncoding(Charset characterEncoding)
     {
         this.characterEncoding = characterEncoding;
+    }
+
+    public String getBulletCharacters() {
+        return bulletChars;
+    }
+
+    public void setBulletCharacters(String bulletChars) {
+        this.bulletChars = bulletChars;
     }
 
     public HashMap<String, CustomShapeDefinition> getCustomShapes()

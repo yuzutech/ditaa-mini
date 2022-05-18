@@ -811,23 +811,23 @@ public class TextGrid {
 //	25CB white circle
 //	25BA black right-pointing pointer
 
-    public boolean isBullet(Cell cell)
+    public boolean isBullet(Cell cell, String allowedBulletChars)
     {
         char c = get(cell);
-        return (c == 'o' || c == '*')
+        return (allowedBulletChars.indexOf(c) != -1)
                 && isBlank(cell.getEast())
                 && isBlank(cell.getWest())
                 && Character.isLetterOrDigit(get(cell.getEast().getEast()));
     }
 
-    public void replaceBullets()
+    public void replaceBullets(String bulletChars)
     {
         int width = getWidth();
         int height = getHeight();
         for (int yi = 0; yi < height; yi++) {
             for (int xi = 0; xi < width; xi++) {
                 Cell cell = new Cell(xi, yi);
-                if (isBullet(cell)) {
+                if (isBullet(cell, bulletChars)) {
                     set(cell, ' ');
                     set(cell.getEast(), '\u2022');
                 }
@@ -1358,7 +1358,7 @@ public class TextGrid {
         newRows.add(topBottomRow);
         rows = newRows;
 
-        replaceBullets();
+        replaceBullets(options == null ? ProcessingOptions.DEFAULT_BULLET_CHARS : options.getBulletCharacters());
         replaceHumanColorCodes();
     }
 
