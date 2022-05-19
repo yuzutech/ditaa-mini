@@ -92,6 +92,8 @@ public class ConversionOptions {
                 options.renderingOptions.setImageType(RenderingOptions.ImageType.SVG);
             } else if (arg.equals("--svg-font-url")) {
                 options.renderingOptions.setFontURL(args.next());
+            } else if (arg.equals("--bullet-characters")) {
+                options.processingOptions.setBulletCharacters(args.next());
             } else {
                 args.previous();
                 break;
